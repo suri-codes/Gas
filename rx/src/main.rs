@@ -6,7 +6,7 @@ use heapless::Vec;
 use log::error;
 use morse::{Bit, BitSequece, MorseBit, MorseBitSequence, MorseConversion, START_SEQUENCE};
 
-const SAMPLE_HERTZ: u64 = 1000;
+const SAMPLE_HERTZ: u64 = 2000;
 
 const SAMPLE_PERIOD: u64 = 1_000_000 / SAMPLE_HERTZ;
 
@@ -102,11 +102,12 @@ impl Parser {
             }
 
             ListeningMessage => {
+                info!("{bit:#?}");
                 if bit == morse::Bit::Lo {
                     match TryInto::<MorseBit>::try_into(self.bit_buf.clone()) {
                         Ok(m_bit) => {
                             self.bit_buf = BitSequece::new();
-                            info!("{m_bit:?}");
+                            // info!("{m_bit:?}");
                             self.process_m_bit(m_bit);
                         }
                         Err(e) => {

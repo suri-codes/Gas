@@ -15,7 +15,7 @@ pub enum MorseBit {
     LineBreak,
 }
 
-pub type BitSequece = heapless::Vec<Bit, 6>;
+pub type BitSequece = heapless::Vec<Bit, 8>;
 
 pub type MorseBitSequence = heapless::Vec<MorseBit, 6>;
 
@@ -28,9 +28,18 @@ pub enum MorseError {
 
 /// time step defined in period length
 // pub const TIME_STEP_MICROS: u64 = 25;
-pub const TIME_STEP_MICROS: u64 = 1e5 as u64;
+pub const TIME_STEP_MICROS: u64 = 1e5 as u64 / 2;
 
-pub const START_SEQUENCE: [Bit; 6] = [Bit::Hi, Bit::Hi, Bit::Hi, Bit::Hi, Bit::Hi, Bit::Lo];
+pub const START_SEQUENCE: [Bit; 8] = [
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Lo,
+];
 
 pub trait MorseConversion {
     fn to_morse_bit_sequence(&self) -> Result<MorseBitSequence, MorseError>;
@@ -71,7 +80,7 @@ impl MorseConversion for char {
 
 impl From<MorseBit> for BitSequece {
     fn from(value: MorseBit) -> Self {
-        let mut vec = heapless::Vec::<Bit, 6>::new();
+        let mut vec = BitSequece::new();
         use Bit::*;
         match value {
             MorseBit::CharBreak => vec.extend_from_slice(&[Lo]),
