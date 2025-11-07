@@ -17,17 +17,28 @@ pub enum MorseBit {
 
 pub type BitSequece = heapless::Vec<Bit, 6>;
 
-pub type MorseSequence = heapless::Vec<MorseBit, 6>;
+pub type MorseBitSequence = heapless::Vec<MorseBit, 6>;
+
+#[derive(Debug)]
+pub enum MorseError {
+    UnknownBitSequence,
+    UnknownMorseSequence,
+    UnsupportedChar(char),
+}
+
+/// time step defined in period length
+pub const TIME_STEP_MICROS: u64 = 25;
+// pub const TIME_STEP_MICROS: u64 = 1e6 as u64 / 2;
 
 pub trait MorseConversion {
-    fn to_morse_sequence(&self) -> Result<MorseSequence, MorseError>;
-    fn from_morse_sequence(sequence: &MorseSequence) -> Result<Self, MorseError>
+    fn to_morse_bit_sequence(&self) -> Result<MorseBitSequence, MorseError>;
+    fn from_morse_bit_sequence(sequence: &MorseBitSequence) -> Result<Self, MorseError>
     where
         Self: Sized;
 }
 
 impl MorseConversion for char {
-    fn to_morse_sequence(&self) -> Result<MorseSequence, MorseError> {
+    fn to_morse_bit_sequence(&self) -> Result<MorseBitSequence, MorseError> {
         use MorseBit::*;
         let mut vec = heapless::Vec::<MorseBit, 6>::new();
         let slice = {
@@ -47,7 +58,7 @@ impl MorseConversion for char {
         Ok(vec)
     }
 
-    fn from_morse_sequence(sequence: &MorseSequence) -> Result<Self, MorseError> {
+    fn from_morse_bit_sequence(sequence: &MorseBitSequence) -> Result<Self, MorseError> {
         let (_, c) = INVERSE_MORSE_TABLE
             .iter()
             .find(|(e, _)| *e == sequence.as_slice())
@@ -99,15 +110,6 @@ impl TryFrom<BitSequece> for MorseBit {
         Err(MorseError::UnknownBitSequence)
     }
 }
-
-pub enum MorseError {
-    UnknownBitSequence,
-    UnknownMorseSequence,
-    UnsupportedChar(char),
-}
-
-/// time step defined in period length
-struct TimeStep(u8);
 
 pub const MORSE_TABLE: [&[MorseBit]; 128] = {
     let mut table = [&[] as &[MorseBit]; 128];
@@ -223,11 +225,3 @@ pub const INVERSE_MORSE_TABLE: &[(&[MorseBit], char)] = &[
     (&[Dash, Dash, Dash, Dot, Dot], '8'),
     (&[Dash, Dash, Dash, Dash, Dot], '9'),
 ];
-
-// Helper function to lookup
-// pub fn morse_to_char(morse: &[MorseBit]) -> Option<u8> {
-//     INVERSE_MORSE_TABLE
-//         .iter()
-//         .find(|(pattern, _)| *pattern == morse)
-//         .map(|(_, ch)| *ch)
-// }
