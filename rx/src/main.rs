@@ -2,8 +2,9 @@ use std::ops::BitAnd;
 
 use ::log::info;
 use esp_idf_svc::hal::units::Hertz;
+use heapless::Vec;
 use log::error;
-use morse::{BitSequece, MorseBit, MorseBitSequence, MorseConversion};
+use morse::{Bit, BitSequece, MorseBit, MorseBitSequence, MorseConversion, START_SEQUENCE};
 
 const SAMPLE_HERTZ: u64 = 1000;
 
@@ -38,13 +39,12 @@ fn main() -> anyhow::Result<()> {
     let mut parser = Parser::new();
 
     loop {
-        if let Ok(num_read) = adc.read(&mut samples, 10) {
-            // info!("Read {} measurement.", num_read);
-            let len = num_read;
-            let sum: u64 = samples.map(|e| e.data() as u64).into_iter().sum();
-            let avg = sum as f64 / len as f64;
+        if let Ok(num_read) = adc.read(&mut samples, 1) {
+            // assert!(num_read == SAMPLE_STEP as usize);
+            let sum: u64 = samples[0..num_read].iter().map(|e| e.data() as u64).sum();
+            let avg = sum as f64 / num_read as f64;
 
-            let bit = if avg <= 50.0 {
+            let bit = if avg <= 60.0 {
                 morse::Bit::Lo
             } else {
                 morse::Bit::Hi
@@ -61,6 +61,14 @@ fn main() -> anyhow::Result<()> {
 struct Parser {
     bit_buf: BitSequece,
     morse_bit_buf: MorseBitSequence,
+    message_buf: String,
+
+    state: ParserState,
+}
+
+enum ParserState {
+    WaitForStart,
+    ListeningMessage,
 }
 
 impl Parser {
@@ -68,27 +76,56 @@ impl Parser {
         Parser {
             bit_buf: BitSequece::new(),
             morse_bit_buf: MorseBitSequence::new(),
+            message_buf: String::new(),
+            state: ParserState::WaitForStart,
         }
     }
     fn process_bit(&mut self, bit: morse::Bit) {
+        use morse::Bit::*;
+        use ParserState::*;
         self.bit_buf.push(bit).expect("should never overflow");
-
-        // info!("bit_buf: {:?}", self.bit_buf);
-        // we process bit buf on lo
-        if bit == morse::Bit::Lo {
-            match TryInto::<MorseBit>::try_into(self.bit_buf.clone()) {
-                Ok(m_bit) => {
-                    self.bit_buf = BitSequece::new();
-                    // info!("{m_bit:?}");
-                    self.process_m_bit(m_bit);
+        match self.state {
+            WaitForStart => {
+                if self.bit_buf.is_full() {
+                    if self.bit_buf.as_slice() == START_SEQUENCE {
+                        info!("start sequence received");
+                        self.bit_buf = BitSequece::new();
+                        self.state = ListeningMessage;
+                    } else {
+                        self.bit_buf = BitSequece::new();
+                    }
                 }
-                Err(e) => {
-                    error!("failed to parse bit pattern: {e:?}");
-                    error!("pattern: {:?}", self.bit_buf);
+
+                if bit == Bit::Lo {
                     self.bit_buf = BitSequece::new();
                 }
             }
+
+            ListeningMessage => {
+                if bit == morse::Bit::Lo {
+                    match TryInto::<MorseBit>::try_into(self.bit_buf.clone()) {
+                        Ok(m_bit) => {
+                            self.bit_buf = BitSequece::new();
+                            info!("{m_bit:?}");
+                            self.process_m_bit(m_bit);
+                        }
+                        Err(e) => {
+                            error!("failed to parse bit pattern: {e:?}");
+                            error!("pattern: {:?}", self.bit_buf);
+                            // self.bit_buf = BitSequece::new();
+
+                            self.message_buf = String::new();
+                            self.bit_buf = BitSequece::new();
+                            self.morse_bit_buf = MorseBitSequence::new();
+                            self.state = ParserState::WaitForStart;
+                        }
+                    }
+                }
+            }
         }
+
+        // info!("bit_buf: {:?}", self.bit_buf);
+        // we process bit buf on lo
     }
 
     fn process_m_bit(&mut self, m_bit: morse::MorseBit) {
@@ -96,7 +133,8 @@ impl Parser {
             match char::from_morse_bit_sequence(&self.morse_bit_buf) {
                 Ok(char) => {
                     if char != '\0' {
-                        info!("{char}");
+                        self.message_buf.push(char);
+                        // info!("{char}");
                     }
                 }
                 Err(_) => {
@@ -108,6 +146,14 @@ impl Parser {
             self.morse_bit_buf
                 .push(m_bit)
                 .expect("should never overflow");
+        }
+
+        if m_bit == MorseBit::LineBreak {
+            info!("{:?}", self.message_buf);
+            self.message_buf = String::new();
+            self.bit_buf = BitSequece::new();
+            self.morse_bit_buf = MorseBitSequence::new();
+            self.state = ParserState::WaitForStart;
         }
     }
 }

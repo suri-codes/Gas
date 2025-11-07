@@ -28,7 +28,9 @@ pub enum MorseError {
 
 /// time step defined in period length
 // pub const TIME_STEP_MICROS: u64 = 25;
-pub const TIME_STEP_MICROS: u64 = 1e5 as u64 / 2;
+pub const TIME_STEP_MICROS: u64 = 1e5 as u64;
+
+pub const START_SEQUENCE: [Bit; 6] = [Bit::Hi, Bit::Hi, Bit::Hi, Bit::Hi, Bit::Hi, Bit::Lo];
 
 pub trait MorseConversion {
     fn to_morse_bit_sequence(&self) -> Result<MorseBitSequence, MorseError>;
