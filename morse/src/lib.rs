@@ -27,8 +27,8 @@ pub enum MorseError {
 }
 
 /// time step defined in period length
-pub const TIME_STEP_MICROS: u64 = 25;
-// pub const TIME_STEP_MICROS: u64 = 1e6 as u64 / 2;
+// pub const TIME_STEP_MICROS: u64 = 25;
+pub const TIME_STEP_MICROS: u64 = 1e5 as u64 / 2;
 
 pub trait MorseConversion {
     fn to_morse_bit_sequence(&self) -> Result<MorseBitSequence, MorseError>;
@@ -188,6 +188,9 @@ pub const MORSE_TABLE: [&[MorseBit]; 128] = {
 
 use MorseBit::*;
 pub const INVERSE_MORSE_TABLE: &[(&[MorseBit], char)] = &[
+    (&[CharBreak], '\0'),
+    (&[LineBreak], '\n'),
+    (&[WordBreak], ' '),
     (&[Dot, Dash], 'A'),
     (&[Dash, Dot, Dot, Dot], 'B'),
     (&[Dash, Dot, Dash, Dot], 'C'),

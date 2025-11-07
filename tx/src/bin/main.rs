@@ -21,7 +21,8 @@ extern crate alloc;
 esp_bootloader_esp_idf::esp_app_desc!();
 
 // const MSG: &'static str = "WHAT the actual fuck dude\n We are cooking";
-const MSG: &'static str = "Hi\n";
+// const MSG: &'static str = "Hi\n";
+const MSG: &'static str = "Surendra";
 
 #[main]
 fn main() -> ! {
@@ -66,11 +67,11 @@ fn main() -> ! {
 fn hold_bit_for_time_step(led: &mut Output<'_>, bit: morse::Bit) {
     match bit {
         morse::Bit::Hi => {
-            info!("HI");
+            // info!("HI");
             led.set_high();
         }
         morse::Bit::Lo => {
-            info!("LO");
+            // info!("LO");
             led.set_low();
         }
     }
