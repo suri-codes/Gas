@@ -46,6 +46,9 @@ fn main() -> ! {
         .unwrap();
 
     let delay = Delay::new();
+
+    let mut running_avg_recv_freq: f64 = 0.0;
+    let mut transmits = 0;
     loop {
         // send start sequence
         info!("sending start sequence!");
@@ -75,19 +78,24 @@ fn main() -> ! {
             / (((elapsed_char_micros - expected_time as u64) as f64 / char_bits as f64)
                 + TIME_STEP_MICROS as f64);
 
+        transmits += 1;
+        running_avg_recv_freq = running_avg_recv_freq
+            + ((optimal_receiver_freq - running_avg_recv_freq) / transmits as f64);
+
         info!("Message           :  {}", MSG);
         info!("transmission time :  {:#?} micros", elapsed_char_micros);
-        info!("optimal recv freq :  {} Hz", optimal_receiver_freq);
+        info!("optimal recv freq :  {} Hz", running_avg_recv_freq);
         info!("chars per second  :  {:#?}", char_per_sec);
         info!("bits per second   :  {:#?}", bits_per_sec);
         info!("total msg bits    :  {:#?}", char_bits);
         info!("total bits        :  {:#?}", bits);
         info!("\n\n");
 
-        print_data_packet(&data_packet);
+        // print_data_packet(&data_packet);
 
         // print the light vals we sent
-        delay.delay(Duration::from_secs(2));
+        // delay.delay(Duration::from_secs(1));
+        delay.delay(Duration::from_millis(500));
     }
 }
 
@@ -103,7 +111,7 @@ fn print_data_packet(data_packet: &DataPacket) {
 fn form_data_packet() -> Result<DataPacket, MorseError> {
     let mut packet = DataPacket::new();
 
-    for char in MSG.chars().into_iter() {
+    for char in MSG.to_lowercase().chars().into_iter() {
         let m_seq = char
             .to_morse_bit_sequence()
             .expect("should be a valid bit sequence");

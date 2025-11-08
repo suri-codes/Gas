@@ -34,10 +34,13 @@ pub enum MorseError {
 // pub const TIME_STEP_MICROS: u64 = 1000;
 // pub const TIME_STEP_MICROS: u64 = 100;
 // pub const TIME_STEP_MICROS: u64 = 50;
-pub const TIME_STEP_MICROS: u64 = 20;
+// pub const TIME_STEP_MICROS: u64 = 20;
+pub const TIME_STEP_MICROS: u64 = 15;
 
 // pub const MSG: &'static str = "suri";
-pub const MSG: &'static str = "Hi";
+// pub const MSG: &'static str = "Hello ESP32";
+pub const MSG: &'static str = "Hello";
+// pub const MSG: &'static str = "Hi";
 
 pub const START_SEQUENCE: [Bit; 8] = [
     Bit::Hi,

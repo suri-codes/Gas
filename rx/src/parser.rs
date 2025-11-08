@@ -17,7 +17,7 @@ pub struct ListeningForMessage;
 
 pub struct Processing;
 
-pub type RawValBuf = heapless::Vec<u16, 32>;
+pub type RawValBuf = heapless::Vec<u16, 100>;
 
 pub struct Parser<State = WaitingForStart> {
     state: core::marker::PhantomData<State>,
@@ -45,7 +45,7 @@ impl Parser<WaitingForStart> {
     }
 
     pub fn process_light_val(&mut self, raw_val: u16) -> Option<Parser<ListeningForMessage>> {
-        let bit = if raw_val < 50 { Bit::Lo } else { Bit::Hi };
+        let bit = if raw_val < 100 { Bit::Lo } else { Bit::Hi };
         let start_queue = self.start_queue.as_mut().unwrap();
         // we want to process start as a sliding window
         // here we do sliding window
@@ -79,7 +79,7 @@ impl Parser<ListeningForMessage> {
         if self.raw_val_buf.push(raw_val).is_err() {
             return Some(Err(MorseError::FullBuffer));
         }
-        let bit = if raw_val < 50 { Bit::Lo } else { Bit::Hi };
+        let bit = if raw_val < 100 { Bit::Lo } else { Bit::Hi };
 
         if self.bit_seq.push(bit).is_err() {
             return Some(Err(MorseError::FullBuffer));
@@ -123,6 +123,12 @@ impl Parser<Processing> {
             let c = char::from_morse_slice(bit_slice)?;
             msg.push(c);
         }
+
+        let msg = msg
+            .to_lowercase()
+            .strip_suffix('\n')
+            .ok_or(MorseError::UnknownMorseSequence)?
+            .to_owned();
 
         Ok(msg)
     }
