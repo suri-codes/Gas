@@ -1294,6 +1294,7 @@ dependencies = [
  "esp-bootloader-esp-idf",
  "esp-hal",
  "esp-println",
+ "heapless 0.9.1",
  "morse",
 ]
 

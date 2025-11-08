@@ -11,7 +11,7 @@ use crate::parser::{ListeningForMessage, Parser, Processing};
 // const SAMPLE_HERTZ: u64 = 9_894;
 // const SAMPLE_HERTZ: u64 = 19_575;
 // const SAMPLE_HERTZ: u64 = 38_332;
-const SAMPLE_HERTZ: u64 = 47_413;
+const SAMPLE_HERTZ: u64 = 47_486;
 //
 
 // const SAMPLE_STEP: u64 = morse::TIME_STEP_MICROS / SAMPLE_PERIOD;
@@ -50,12 +50,6 @@ fn main() -> anyhow::Result<()> {
         };
 
         for measurement in &samples[0..num_read] {
-            let bit = if measurement.data() <= 60 {
-                Bit::Lo
-            } else {
-                Bit::Hi
-            };
-
             if let Some(ref mut parser) = message_parser {
                 match parser.message() {
                     Ok(msg) => {
@@ -63,24 +57,27 @@ fn main() -> anyhow::Result<()> {
                     }
                     Err(e) => {
                         error!("failed to parse message! {e:?}");
-                        info!("bit_seq: {:#?}", parser.bit_seq);
-                        info!("morse_seq: {:#?}", parser.morse_seq);
+                        // info!("light vals: {:#?}", parser.raw_val_buf);
+                        // info!("bit_seq: {:#?}", parser.bit_seq);
+                        // info!("morse_seq: {:#?}", parser.morse_seq);
                     }
                 }
+                info!("light vals: {:#?}", parser.raw_val_buf);
 
                 message_listener = None;
                 message_parser = None;
                 start_listener = Parser::default();
             } else if let Some(ref mut listener) = message_listener {
-                match listener.process_data_bit(bit) {
+                match listener.process_light_val(measurement.data()) {
                     Some(Ok(parser)) => {
                         message_parser = Some(parser);
                         message_listener = None;
                     }
                     Some(Err(e)) => {
                         error!("morse error! {e:?}");
-                        info!("bit_seq: {:#?}", listener.bit_seq);
-                        info!("morse_seq: {:#?}", listener.morse_seq);
+                        // info!("bit_seq: {:#?}", listener.bit_seq);
+                        // info!("morse_seq: {:#?}", listener.morse_seq);
+                        // info!("light vals: {:#?}", listener.raw_val_buf);
                         start_listener = Parser::default();
                         message_parser = None;
                         message_listener = None;
@@ -88,7 +85,7 @@ fn main() -> anyhow::Result<()> {
 
                     None => continue,
                 }
-            } else if let Some(listener) = start_listener.process_start_bit(bit) {
+            } else if let Some(listener) = start_listener.process_light_val(measurement.data()) {
                 info!("start received");
                 message_listener = Some(listener);
                 start_listener = Parser::default();

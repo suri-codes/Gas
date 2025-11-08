@@ -17,10 +17,13 @@ pub struct ListeningForMessage;
 
 pub struct Processing;
 
+pub type RawValBuf = heapless::Vec<u16, 32>;
+
 pub struct Parser<State = WaitingForStart> {
     state: core::marker::PhantomData<State>,
     start_queue: Option<VecDeque<Bit>>,
     pub bit_seq: BitSequece,
+    pub raw_val_buf: RawValBuf,
     pub morse_seq: MorseBitSequence,
 }
 
@@ -36,13 +39,14 @@ impl Parser<WaitingForStart> {
             state: PhantomData,
             start_queue: Some(VecDeque::with_capacity(12)),
             bit_seq: BitSequece::new(),
+            raw_val_buf: RawValBuf::new(),
             morse_seq: MorseBitSequence::new(),
         }
     }
 
-    pub fn process_start_bit(&mut self, bit: Bit) -> Option<Parser<ListeningForMessage>> {
+    pub fn process_light_val(&mut self, raw_val: u16) -> Option<Parser<ListeningForMessage>> {
+        let bit = if raw_val < 50 { Bit::Lo } else { Bit::Hi };
         let start_queue = self.start_queue.as_mut().unwrap();
-        // info!("{bit:?}");
         // we want to process start as a sliding window
         // here we do sliding window
         if start_queue.len() == START_SEQUENCE.len() {
@@ -54,6 +58,7 @@ impl Parser<WaitingForStart> {
                 return Some(Parser {
                     state: PhantomData,
                     start_queue: None,
+                    raw_val_buf: RawValBuf::new(),
                     bit_seq: BitSequece::new(),
                     morse_seq: MorseBitSequence::new(),
                 });
@@ -67,9 +72,19 @@ impl Parser<WaitingForStart> {
 }
 
 impl Parser<ListeningForMessage> {
-    pub fn process_data_bit(&mut self, bit: Bit) -> Option<Result<Parser<Processing>, MorseError>> {
-        // info!("{bit:?}");
-        self.bit_seq.push(bit).expect("should never be full");
+    pub fn process_light_val(
+        &mut self,
+        raw_val: u16,
+    ) -> Option<Result<Parser<Processing>, MorseError>> {
+        if self.raw_val_buf.push(raw_val).is_err() {
+            return Some(Err(MorseError::FullBuffer));
+        }
+        let bit = if raw_val < 50 { Bit::Lo } else { Bit::Hi };
+
+        if self.bit_seq.push(bit).is_err() {
+            return Some(Err(MorseError::FullBuffer));
+        }
+
         if bit == morse::Bit::Lo {
             match TryInto::<MorseBit>::try_into(self.bit_seq.clone()) {
                 Ok(m_bit) => {
@@ -82,6 +97,7 @@ impl Parser<ListeningForMessage> {
                     if m_bit == MorseBit::LineBreak {
                         return Some(Ok(Parser {
                             state: PhantomData,
+                            raw_val_buf: self.raw_val_buf.clone(),
                             start_queue: None,
                             bit_seq: self.bit_seq.clone(),
                             morse_seq: self.morse_seq.clone(),
@@ -92,10 +108,6 @@ impl Parser<ListeningForMessage> {
                     return Some(Err(e));
                 }
             }
-        }
-
-        if self.bit_seq.is_full() {
-            return Some(Err(MorseError::FullBuffer));
         }
 
         None

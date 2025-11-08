@@ -36,9 +36,10 @@ pub enum MorseError {
 // pub const TIME_STEP_MICROS: u64 = 50;
 pub const TIME_STEP_MICROS: u64 = 20;
 
-pub const MSG: &'static str = "suri";
+// pub const MSG: &'static str = "suri";
+pub const MSG: &'static str = "Hi";
 
-pub const START_SEQUENCE: [Bit; 6] = [
+pub const START_SEQUENCE: [Bit; 8] = [
     Bit::Hi,
     Bit::Hi,
     Bit::Hi,
@@ -49,8 +50,8 @@ pub const START_SEQUENCE: [Bit; 6] = [
     // Bit::Hi,
     // Bit::Hi,
     // Bit::Hi,
-    // Bit::Lo,
-    // Bit::Lo,
+    Bit::Lo,
+    Bit::Lo,
     // Bit::Lo,
     // Bit::Lo,
     // Bit::Hi,
