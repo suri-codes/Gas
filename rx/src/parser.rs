@@ -17,7 +17,7 @@ pub struct ListeningForMessage;
 
 pub struct Processing;
 
-pub type RawValBuf = heapless::Vec<u16, 100>;
+pub type RawValBuf = heapless::Vec<u16, 200>;
 
 pub struct Parser<State = WaitingForStart> {
     state: core::marker::PhantomData<State>,

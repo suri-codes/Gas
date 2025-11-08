@@ -23,7 +23,7 @@ extern crate alloc;
 
 esp_bootloader_esp_idf::esp_app_desc!();
 
-type DataPacket = heapless::Vec<Bit, 100>;
+type DataPacket = heapless::Vec<Bit, 150>;
 
 #[main]
 fn main() -> ! {

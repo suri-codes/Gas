@@ -12,7 +12,9 @@ use crate::parser::{ListeningForMessage, Parser, Processing};
 // const SAMPLE_HERTZ: u64 = 19_575;
 // const SAMPLE_HERTZ: u64 = 38_332;
 // const SAMPLE_HERTZ: u64 = 47_567;
-const SAMPLE_HERTZ: u64 = 62_428;
+// const SAMPLE_HERTZ: u64 = 62_428;
+// const SAMPLE_HERTZ: u64 = 76_825;
+const SAMPLE_HERTZ: u64 = 83294;
 //
 
 // const SAMPLE_STEP: u64 = morse::TIME_STEP_MICROS / SAMPLE_PERIOD;
