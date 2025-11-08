@@ -31,21 +31,30 @@ pub enum MorseError {
 // pub const TIME_STEP_MICROS: u64 = 25;
 // pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
 // pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
+// pub const TIME_STEP_MICROS: u64 = 1000;
+// pub const TIME_STEP_MICROS: u64 = 100;
+// pub const TIME_STEP_MICROS: u64 = 50;
 pub const TIME_STEP_MICROS: u64 = 20;
 
-pub const START_SEQUENCE: [Bit; 12] = [
+pub const MSG: &'static str = "suri";
+
+pub const START_SEQUENCE: [Bit; 6] = [
     Bit::Hi,
     Bit::Hi,
     Bit::Hi,
     Bit::Hi,
     Bit::Hi,
     Bit::Hi,
-    Bit::Lo,
-    Bit::Lo,
-    Bit::Lo,
-    Bit::Lo,
-    Bit::Hi,
-    Bit::Hi,
+    // Bit::Hi,
+    // Bit::Hi,
+    // Bit::Hi,
+    // Bit::Hi,
+    // Bit::Lo,
+    // Bit::Lo,
+    // Bit::Lo,
+    // Bit::Lo,
+    // Bit::Hi,
+    // Bit::Hi,
 ];
 
 pub trait MorseConversion {
@@ -90,9 +99,9 @@ impl From<MorseBit> for BitSequece {
         let mut vec = BitSequece::new();
         use Bit::*;
         match value {
-            MorseBit::CharBreak => vec.extend_from_slice(&[Lo]),
-            MorseBit::Dot => vec.extend_from_slice(&[Hi, Lo]),
-            MorseBit::Dash => vec.extend_from_slice(&[Hi, Hi, Lo]),
+            MorseBit::Dot => vec.extend_from_slice(&[Lo]),
+            MorseBit::Dash => vec.extend_from_slice(&[Hi, Lo]),
+            MorseBit::CharBreak => vec.extend_from_slice(&[Hi, Hi, Lo]),
             MorseBit::WordBreak => vec.extend_from_slice(&[Hi, Hi, Hi, Lo]),
             MorseBit::LineBreak => vec.extend_from_slice(&[Hi, Hi, Hi, Hi, Lo]),
         }
@@ -109,14 +118,14 @@ impl TryFrom<BitSequece> for MorseBit {
         use MorseBit::*;
 
         if value.starts_with(&[Lo]) && value.len() == 1 {
-            return Ok(CharBreak);
+            return Ok(Dot);
         }
 
         if value.starts_with(&[Hi, Lo]) && value.len() == 2 {
-            return Ok(Dot);
+            return Ok(Dash);
         }
         if value.starts_with(&[Hi, Hi, Lo]) && value.len() == 3 {
-            return Ok(Dash);
+            return Ok(CharBreak);
         }
         if value.starts_with(&[Hi, Hi, Hi, Lo]) && value.len() == 4 {
             return Ok(WordBreak);

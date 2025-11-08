@@ -19,9 +19,9 @@ pub struct Processing;
 
 pub struct Parser<State = WaitingForStart> {
     state: core::marker::PhantomData<State>,
-    start_queue: VecDeque<Bit>,
-    bit_seq: BitSequece,
-    morse_seq: MorseBitSequence,
+    start_queue: Option<VecDeque<Bit>>,
+    pub bit_seq: BitSequece,
+    pub morse_seq: MorseBitSequence,
 }
 
 impl Default for Parser<WaitingForStart> {
@@ -34,31 +34,32 @@ impl Parser<WaitingForStart> {
     pub fn new() -> Self {
         Self {
             state: PhantomData,
-            start_queue: VecDeque::with_capacity(6),
+            start_queue: Some(VecDeque::with_capacity(12)),
             bit_seq: BitSequece::new(),
             morse_seq: MorseBitSequence::new(),
         }
     }
 
     pub fn process_start_bit(&mut self, bit: Bit) -> Option<Parser<ListeningForMessage>> {
+        let start_queue = self.start_queue.as_mut().unwrap();
         // info!("{bit:?}");
         // we want to process start as a sliding window
         // here we do sliding window
-        if self.start_queue.len() == START_SEQUENCE.len() {
-            self.start_queue.pop_front();
-            self.start_queue.push_back(bit);
-            let pattern = self.start_queue.make_contiguous();
+        if start_queue.len() == START_SEQUENCE.len() {
+            start_queue.pop_front();
+            start_queue.push_back(bit);
+            let pattern = start_queue.make_contiguous();
 
             if pattern == START_SEQUENCE {
                 return Some(Parser {
                     state: PhantomData,
-                    start_queue: VecDeque::new(),
+                    start_queue: None,
                     bit_seq: BitSequece::new(),
                     morse_seq: MorseBitSequence::new(),
                 });
             }
         } else {
-            self.start_queue.push_back(bit);
+            start_queue.push_back(bit);
         }
 
         None
@@ -67,15 +68,12 @@ impl Parser<WaitingForStart> {
 
 impl Parser<ListeningForMessage> {
     pub fn process_data_bit(&mut self, bit: Bit) -> Option<Result<Parser<Processing>, MorseError>> {
-        // info!("{bit:#?}");
+        // info!("{bit:?}");
         self.bit_seq.push(bit).expect("should never be full");
-        // info!("bit_seq: {:?}", self.bit_seq);
         if bit == morse::Bit::Lo {
             match TryInto::<MorseBit>::try_into(self.bit_seq.clone()) {
                 Ok(m_bit) => {
-                    self.bit_seq = BitSequece::new();
-
-                    // info!("{m_bit:?}");
+                    self.bit_seq.clear();
 
                     self.morse_seq
                         .push(m_bit)
@@ -84,8 +82,8 @@ impl Parser<ListeningForMessage> {
                     if m_bit == MorseBit::LineBreak {
                         return Some(Ok(Parser {
                             state: PhantomData,
-                            start_queue: VecDeque::new(),
-                            bit_seq: BitSequece::new(),
+                            start_queue: None,
+                            bit_seq: self.bit_seq.clone(),
                             morse_seq: self.morse_seq.clone(),
                         }));
                     }

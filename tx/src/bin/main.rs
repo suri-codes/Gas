@@ -6,12 +6,14 @@
     holding buffers for the duration of a data transfer."
 )]
 
+use core::iter::once;
+
 use defmt::info;
 use esp_hal::clock::CpuClock;
 use esp_hal::gpio::{Output, OutputConfig};
 use esp_hal::main;
 use esp_hal::time::{Duration, Instant};
-use morse::{BitSequece, MorseConversion, START_SEQUENCE, TIME_STEP_MICROS};
+use morse::{BitSequece, MSG, MorseConversion, START_SEQUENCE, TIME_STEP_MICROS};
 use {esp_backtrace as _, esp_println as _};
 
 extern crate alloc;
@@ -28,12 +30,14 @@ esp_bootloader_esp_idf::esp_app_desc!();
 
 // const MSG: &'static str = "aaa\n";
 // const MSG: &'static str = "eis\n";
-const MSG: &'static str = "suri\n";
+// const MSG: &'static str = "s u\n";
 
 // ~ 300 char/s
-// const MSG: &'static str = "Surendra\n";
+// const MSG: &'static str = "Sure ndra\n";
 
 // const MSG: &'static str = "Hello ESP32\n";
+// const MSG: &'static str = "Hi\n";
+//
 
 #[main]
 fn main() -> ! {
@@ -60,7 +64,8 @@ fn main() -> ! {
 
         let char_start = Instant::now();
         let mut char_bits = 0;
-        for char in MSG.chars().into_iter() {
+
+        for char in MSG.chars().into_iter().chain(once('\n')) {
             let m_seq = char
                 .to_morse_bit_sequence()
                 .expect("should be a valid bit sequence");
@@ -73,23 +78,34 @@ fn main() -> ! {
                 }
             }
             // char break
-            bits += 1;
-            char_bits += 1;
+            bits += 3;
+            char_bits += 3;
+            hold_bit_for_time_step(&mut led, morse::Bit::Hi);
+            hold_bit_for_time_step(&mut led, morse::Bit::Hi);
             hold_bit_for_time_step(&mut led, morse::Bit::Lo);
         }
+
         let elapsed_char_micros = char_start.elapsed().as_micros();
         let elapsed_bit_micros = bit_start.elapsed().as_micros();
         let char_per_sec = (MSG.len() as f64 * 1.0e6) / elapsed_char_micros as f64;
         let bits_per_sec = (bits as f64 * 1.0e6) / elapsed_bit_micros as f64;
-        info!("Message: {}", MSG);
-        info!("transmission time: {:#?}", elapsed_char_micros);
         let expected_time = char_bits as usize * TIME_STEP_MICROS as usize;
         // + START_SEQUENCE.len() * TIME_STEP_MICROS as usize;
-        info!("expected transmission time: {:#?}", expected_time);
-        info!("chars per second : {:#?}", char_per_sec);
-        info!("char bits : {:#?}", char_bits);
-        info!("bits per second  : {:#?}", bits_per_sec);
-        info!("total bits : {:#?}", bits);
+        // info!("expected transmission time: {:#?}", expected_time);
+
+        // should calculate what the ideal receiver freq should be
+        let optimal_receiver_freq = 1e6
+            / (((elapsed_char_micros - expected_time as u64) as f64 / char_bits as f64)
+                + TIME_STEP_MICROS as f64);
+
+        info!("Message:            {}", MSG);
+        info!("transmission time:  {:#?} micros", elapsed_char_micros);
+        info!("optimal recv freq:  {} Hz", optimal_receiver_freq);
+        info!("chars per second :  {:#?}", char_per_sec);
+        info!("bits per second  :  {:#?}", bits_per_sec);
+        info!("\n\n");
+        // info!("char bits : {:#?}", char_bits);
+        // info!("total bits : {:#?}", bits);
         spin_wait(Duration::from_secs(2));
     }
 }

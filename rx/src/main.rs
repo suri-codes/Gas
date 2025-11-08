@@ -6,14 +6,13 @@ use morse::{Bit, TIME_STEP_MICROS};
 use crate::parser::{ListeningForMessage, Parser, Processing};
 
 // max it allows is 80_000
-// const SAMPLE_HERTZ: u64 = 50_000;
-// const SAMPLE_HERTZ: u64 = 10_000;
+
 // const SAMPLE_HERTZ: u64 = 1_000;
-// const SAMPLE_HERTZ: u64 = 1980;
-// const SAMPLE_HERTZ: u64 = 5015;
-const SAMPLE_HERTZ: u64 = 47_287;
-// const SAMPLE_HERTZ: u64 = 20_000;
-// const SAMPLE_HERTZ: u64 = 10_000;
+// const SAMPLE_HERTZ: u64 = 9_894;
+// const SAMPLE_HERTZ: u64 = 19_575;
+// const SAMPLE_HERTZ: u64 = 38_332;
+const SAMPLE_HERTZ: u64 = 47_413;
+//
 
 // const SAMPLE_STEP: u64 = morse::TIME_STEP_MICROS / SAMPLE_PERIOD;
 const SAMPLE_STEP: u64 = 100;
@@ -51,7 +50,7 @@ fn main() -> anyhow::Result<()> {
         };
 
         for measurement in &samples[0..num_read] {
-            let bit = if measurement.data() <= 40 {
+            let bit = if measurement.data() <= 60 {
                 Bit::Lo
             } else {
                 Bit::Hi
@@ -64,6 +63,8 @@ fn main() -> anyhow::Result<()> {
                     }
                     Err(e) => {
                         error!("failed to parse message! {e:?}");
+                        info!("bit_seq: {:#?}", parser.bit_seq);
+                        info!("morse_seq: {:#?}", parser.morse_seq);
                     }
                 }
 
@@ -78,6 +79,8 @@ fn main() -> anyhow::Result<()> {
                     }
                     Some(Err(e)) => {
                         error!("morse error! {e:?}");
+                        info!("bit_seq: {:#?}", listener.bit_seq);
+                        info!("morse_seq: {:#?}", listener.morse_seq);
                         start_listener = Parser::default();
                         message_parser = None;
                         message_listener = None;
