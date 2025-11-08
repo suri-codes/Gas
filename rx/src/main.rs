@@ -11,6 +11,7 @@ const SAMPLE_HERTZ: u64 = 50_000;
 const SAMPLE_PERIOD: u64 = 1_000_000 / SAMPLE_HERTZ;
 
 const SAMPLE_STEP: u64 = morse::TIME_STEP_MICROS / SAMPLE_PERIOD;
+// const SAMPLE_STEP: u64 = 400;
 // const SAMPLE_STEP: u64 = 100;
 
 mod parser;
@@ -48,6 +49,24 @@ fn main() -> anyhow::Result<()> {
             continue;
         };
 
+        // Process each sample as a bit
+        // for i in 0..num_read {
+        //     let bit = if samples[i].data() <= 70 {
+        //         morse::Bit::Lo
+        //     } else {
+        //         morse::Bit::Hi
+        //     };
+
+        // Feed directly to parser
+        // if let Some(ref mut parser) = message_parser {
+        //     // ... your existing logic
+        // } else if let Some(ref mut listener) = message_listener {
+        //     // ... your existing logic
+        // } else if let Some(listener) = start_listener.process_start_bit(bit) {
+        //     message_listener = Some(listener);
+        //     start_listener = Parser::default();
+        // }
+
         let sum: u64 = samples[0..num_read].iter().map(|e| e.data() as u64).sum();
         let avg = sum as f64 / num_read as f64;
 
@@ -64,7 +83,7 @@ fn main() -> anyhow::Result<()> {
                     info!("{msg}");
                 }
                 Err(e) => {
-                    // error!("failed to parse message! {e:?}");
+                    error!("failed to parse message! {e:?}");
                 }
             }
 
@@ -78,7 +97,7 @@ fn main() -> anyhow::Result<()> {
                     message_listener = None;
                 }
                 Some(Err(e)) => {
-                    // error!("morse error! {e:?}");
+                    error!("morse error! {e:?}");
                     start_listener = Parser::default();
                     message_parser = None;
                     message_listener = None;
@@ -92,4 +111,5 @@ fn main() -> anyhow::Result<()> {
             start_listener = Parser::default();
         }
     }
+    // }
 }

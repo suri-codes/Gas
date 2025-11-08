@@ -22,7 +22,9 @@ esp_bootloader_esp_idf::esp_app_desc!();
 
 // const MSG: &'static str = "WHAT the actual fuck dude We are cooking\n";
 // const MSG: &'static str = "aaaaaaaaaaaaaaaaaa\n";
-const MSG: &'static str = "surendra\n";
+// const MSG: &'static str = "surendra\n";
+// const MSG: &'static str = "na\n";
+const MSG: &'static str = "\n";
 
 #[main]
 fn main() -> ! {
@@ -45,6 +47,7 @@ fn main() -> ! {
         }
 
         let start = Instant::now();
+        let mut bits = 0;
         for char in MSG.chars().into_iter() {
             let m_seq = char
                 .to_morse_bit_sequence()
@@ -52,20 +55,24 @@ fn main() -> ! {
             for m_bit in m_seq {
                 let b_seq: BitSequece = m_bit.into();
                 for bit in b_seq {
+                    bits += 1;
                     hold_bit_for_time_step(&mut led, bit);
                 }
             }
             // char break
             hold_bit_for_time_step(&mut led, morse::Bit::Lo);
         }
+        let elapsed_micros = start.elapsed().as_micros();
         // here we can wait for a bit
         info!("BREAK");
 
         info!("Message: {}", MSG);
-        let elapsed_micros = start.elapsed().as_micros();
+
         info!("transmission time: {:#?}", start.elapsed());
         let char_per_sec = (MSG.len() as f64 * 1.0e6) / elapsed_micros as f64;
-        info!("chars per second: {:#?}", char_per_sec);
+        let bits_per_sec = (bits as f64 * 1.0e6) / elapsed_micros as f64;
+        info!("chars per second : {:#?}", char_per_sec);
+        info!("bits per second  : {:#?}", bits_per_sec);
         // spin_wait(Duration::from_secs(1));
     }
 }
