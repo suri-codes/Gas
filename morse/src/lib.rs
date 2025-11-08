@@ -17,18 +17,19 @@ pub enum MorseBit {
 
 pub type BitSequece = heapless::Vec<Bit, 8>;
 
-pub type MorseBitSequence = heapless::Vec<MorseBit, 6>;
+pub type MorseBitSequence = heapless::Vec<MorseBit, 100>;
 
 #[derive(Debug)]
 pub enum MorseError {
     UnknownBitSequence,
     UnknownMorseSequence,
     UnsupportedChar(char),
+    FullBuffer,
 }
 
 /// time step defined in period length
 // pub const TIME_STEP_MICROS: u64 = 25;
-pub const TIME_STEP_MICROS: u64 = 1e4 as u64;
+pub const TIME_STEP_MICROS: u64 = 1e5 as u64;
 
 // pub const START_SEQUENCE: [Bit; 9] = [
 //     Bit::Hi,
@@ -41,11 +42,22 @@ pub const TIME_STEP_MICROS: u64 = 1e4 as u64;
 //     Bit::Lo,
 //     Bit::Lo,
 // ];
-pub const START_SEQUENCE: [Bit; 5] = [Bit::Hi, Bit::Hi, Bit::Hi, Bit::Hi, Bit::Hi];
+pub const START_SEQUENCE: [Bit; 10] = [
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Hi,
+    Bit::Lo,
+    Bit::Lo,
+    Bit::Lo,
+];
 
 pub trait MorseConversion {
     fn to_morse_bit_sequence(&self) -> Result<MorseBitSequence, MorseError>;
-    fn from_morse_bit_sequence(sequence: &MorseBitSequence) -> Result<Self, MorseError>
+    fn from_morse_slice(sequence: &[MorseBit]) -> Result<Self, MorseError>
     where
         Self: Sized;
 }
@@ -53,7 +65,7 @@ pub trait MorseConversion {
 impl MorseConversion for char {
     fn to_morse_bit_sequence(&self) -> Result<MorseBitSequence, MorseError> {
         use MorseBit::*;
-        let mut vec = heapless::Vec::<MorseBit, 6>::new();
+        let mut vec = MorseBitSequence::new();
         let slice = {
             let table_result = MORSE_TABLE[*self as usize];
             if table_result.is_empty() {
@@ -71,10 +83,10 @@ impl MorseConversion for char {
         Ok(vec)
     }
 
-    fn from_morse_bit_sequence(sequence: &MorseBitSequence) -> Result<Self, MorseError> {
+    fn from_morse_slice(sequence: &[MorseBit]) -> Result<Self, MorseError> {
         let (_, c) = INVERSE_MORSE_TABLE
             .iter()
-            .find(|(e, _)| *e == sequence.as_slice())
+            .find(|(e, _)| *e == sequence)
             .ok_or(MorseError::UnknownMorseSequence)?;
         Ok(*c)
     }

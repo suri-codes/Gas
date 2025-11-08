@@ -66,9 +66,9 @@ impl Parser<WaitingForStart> {
 
 impl Parser<ListeningForMessage> {
     pub fn process_data_bit(&mut self, bit: Bit) -> Option<Result<Parser<Processing>, MorseError>> {
-        // info!("{bit:#?}");
-        // info!("bit_seq: {:?}", self.bit_seq);
+        info!("{bit:#?}");
         self.bit_seq.push(bit).expect("should never be full");
+        info!("bit_seq: {:?}", self.bit_seq);
         if bit == morse::Bit::Lo {
             match TryInto::<MorseBit>::try_into(self.bit_seq.clone()) {
                 Ok(m_bit) => {

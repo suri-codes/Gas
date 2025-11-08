@@ -48,6 +48,8 @@ fn main() -> anyhow::Result<()> {
         let sum: u64 = samples[0..num_read].iter().map(|e| e.data() as u64).sum();
         let avg = sum as f64 / num_read as f64;
 
+        
+
         let bit = if avg <= 70.0 {
             morse::Bit::Lo
         } else {
