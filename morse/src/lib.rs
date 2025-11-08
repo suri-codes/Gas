@@ -29,7 +29,7 @@ pub enum MorseError {
 
 /// time step defined in period length
 // pub const TIME_STEP_MICROS: u64 = 25;
-pub const TIME_STEP_MICROS: u64 = 1e5 as u64;
+pub const TIME_STEP_MICROS: u64 = 1e2 as u64;
 
 // pub const START_SEQUENCE: [Bit; 9] = [
 //     Bit::Hi,
@@ -42,7 +42,7 @@ pub const TIME_STEP_MICROS: u64 = 1e5 as u64;
 //     Bit::Lo,
 //     Bit::Lo,
 // ];
-pub const START_SEQUENCE: [Bit; 10] = [
+pub const START_SEQUENCE: [Bit; 12] = [
     Bit::Hi,
     Bit::Hi,
     Bit::Hi,
@@ -53,6 +53,8 @@ pub const START_SEQUENCE: [Bit; 10] = [
     Bit::Lo,
     Bit::Lo,
     Bit::Lo,
+    Bit::Hi,
+    Bit::Hi,
 ];
 
 pub trait MorseConversion {

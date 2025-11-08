@@ -4,7 +4,7 @@ use log::error;
 
 use crate::parser::{ListeningForMessage, Parser, Processing};
 
-const SAMPLE_HERTZ: u64 = 1_000;
+const SAMPLE_HERTZ: u64 = 50_000;
 
 const SAMPLE_PERIOD: u64 = 1_000_000 / SAMPLE_HERTZ;
 
@@ -48,8 +48,6 @@ fn main() -> anyhow::Result<()> {
         let sum: u64 = samples[0..num_read].iter().map(|e| e.data() as u64).sum();
         let avg = sum as f64 / num_read as f64;
 
-        
-
         let bit = if avg <= 70.0 {
             morse::Bit::Lo
         } else {
@@ -63,7 +61,7 @@ fn main() -> anyhow::Result<()> {
                     info!("{msg}");
                 }
                 Err(e) => {
-                    info!("failed to parse message! {e:?}");
+                    // error!("failed to parse message! {e:?}");
                 }
             }
 
@@ -77,16 +75,16 @@ fn main() -> anyhow::Result<()> {
                     message_listener = None;
                 }
                 Some(Err(e)) => {
-                    error!("morse error! {e:?}");
+                    // error!("morse error! {e:?}");
                     start_listener = Parser::default();
+                    message_parser = None;
                     message_listener = None;
-                    continue;
                 }
 
                 None => continue,
             }
         } else if let Some(listener) = start_listener.process_start_bit(bit) {
-            info!("start received");
+            // info!("start received");
             message_listener = Some(listener);
             start_listener = Parser::default();
         }
