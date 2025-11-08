@@ -1,0 +1,6 @@
+Chip type:         esp32c6 (revision v0.2)
+Crystal frequency: 40 MHz
+Flash size:        8MB
+Features:          WiFi 6, BT 5
+MAC address:       a0:85:e3:da:bf:b4
+App/part. size:    49,312/8,323,072 bytes, 0.59%

@@ -11,20 +11,29 @@ use esp_hal::clock::CpuClock;
 use esp_hal::gpio::{Output, OutputConfig};
 use esp_hal::main;
 use esp_hal::time::{Duration, Instant};
-use morse::{BitSequece, MorseConversion, START_SEQUENCE};
+use morse::{BitSequece, MorseConversion, START_SEQUENCE, TIME_STEP_MICROS};
 use {esp_backtrace as _, esp_println as _};
 
 extern crate alloc;
 
-// This creates a default app-descriptor required by the esp-idf bootloader.
-// For more information see: <https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/app_image_format.html#application-description>
 esp_bootloader_esp_idf::esp_app_desc!();
 
-// const MSG: &'static str = "WHAT the actual fuck dude We are cooking\n";
-// const MSG: &'static str = "aaaaaaaaaaaaaaaaaa\n";
-// const MSG: &'static str = "surendra\n";
-// const MSG: &'static str = "na\n";
-const MSG: &'static str = "\n";
+// this is fasters with a shit ton of error: 637 char/s
+// const MSG: &'static str = "eeeeeeeeeeeeeeeeeeeeeeeee\n";
+
+// this is fastest with 0 error: 496 char/s
+// const MSG: &'static str = "ee\n";
+
+// const MSG: &'static str = "\n";
+
+// const MSG: &'static str = "aaa\n";
+// const MSG: &'static str = "eis\n";
+const MSG: &'static str = "suri\n";
+
+// ~ 300 char/s
+// const MSG: &'static str = "Surendra\n";
+
+// const MSG: &'static str = "Hello ESP32\n";
 
 #[main]
 fn main() -> ! {
@@ -42,12 +51,15 @@ fn main() -> ! {
     loop {
         // send start sequence
         info!("sending start sequence!");
+        let bit_start = Instant::now();
+        let mut bits = 0;
         for bit in START_SEQUENCE {
+            bits += 1;
             hold_bit_for_time_step(&mut led, bit);
         }
 
-        let start = Instant::now();
-        let mut bits = 0;
+        let char_start = Instant::now();
+        let mut char_bits = 0;
         for char in MSG.chars().into_iter() {
             let m_seq = char
                 .to_morse_bit_sequence()
@@ -56,24 +68,29 @@ fn main() -> ! {
                 let b_seq: BitSequece = m_bit.into();
                 for bit in b_seq {
                     bits += 1;
+                    char_bits += 1;
                     hold_bit_for_time_step(&mut led, bit);
                 }
             }
             // char break
+            bits += 1;
+            char_bits += 1;
             hold_bit_for_time_step(&mut led, morse::Bit::Lo);
         }
-        let elapsed_micros = start.elapsed().as_micros();
-        // here we can wait for a bit
-        info!("BREAK");
-
+        let elapsed_char_micros = char_start.elapsed().as_micros();
+        let elapsed_bit_micros = bit_start.elapsed().as_micros();
+        let char_per_sec = (MSG.len() as f64 * 1.0e6) / elapsed_char_micros as f64;
+        let bits_per_sec = (bits as f64 * 1.0e6) / elapsed_bit_micros as f64;
         info!("Message: {}", MSG);
-
-        info!("transmission time: {:#?}", start.elapsed());
-        let char_per_sec = (MSG.len() as f64 * 1.0e6) / elapsed_micros as f64;
-        let bits_per_sec = (bits as f64 * 1.0e6) / elapsed_micros as f64;
+        info!("transmission time: {:#?}", elapsed_char_micros);
+        let expected_time = char_bits as usize * TIME_STEP_MICROS as usize;
+        // + START_SEQUENCE.len() * TIME_STEP_MICROS as usize;
+        info!("expected transmission time: {:#?}", expected_time);
         info!("chars per second : {:#?}", char_per_sec);
+        info!("char bits : {:#?}", char_bits);
         info!("bits per second  : {:#?}", bits_per_sec);
-        // spin_wait(Duration::from_secs(1));
+        info!("total bits : {:#?}", bits);
+        spin_wait(Duration::from_secs(2));
     }
 }
 

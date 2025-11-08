@@ -1,0 +1,394 @@
+Chip type:         esp32c3 (revision v0.4)
+Crystal frequency: 40 MHz
+Flash size:        4MB
+Features:          WiFi, BLE
+MAC address:       b4:3a:45:60:74:60
+App/part. size:    441,120/4,128,768 bytes, 10.68%
+Commands:
+    CTRL+R    Reset chip
+    CTRL+C    Exit
+
+ESP-ROM:esp32c3-api1-20210207
+Build:Feb  7 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0xc (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40380866
+[38;5;11m0x40380866 - esp_flash_get_physical_size
+    at ??:??
+[39mSPIWP:0xee
+mode:DIO, clock div:2
+load:0x3fcd5820,len:0x1574
+load:0x403cc710,len:0xc34
+load:0x403ce710,len:0x2f64
+entry 0x403cc71a
+I (24) boot: ESP-IDF v5.4.1-426-g3ad36321ea 2nd stage bootloader
+I (24) boot: compile time Apr 24 2025 15:55:47
+I (25) boot: chip revision: v0.4
+I (26) boot: efuse block revision: v1.3
+I (29) boot.esp32c3: SPI Speed      : 40MHz
+I (33) boot.esp32c3: SPI Mode       : DIO
+I (37) boot.esp32c3: SPI Flash Size : 4MB
+I (41) boot: Enabling RNG early entropy source...
+I (45) boot: Partition Table:
+I (48) boot: ## Label            Usage          Type ST Offset   Length
+I (54) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (61) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (67) boot:  2 factory          factory app      00 00 00010000 003f0000
+I (74) boot: End of partition table
+I (77) esp_image: segment 0: paddr=00010020 vaddr=3c050020 size=13fb4h ( 81844) map
+I (102) esp_image: segment 1: paddr=00023fdc vaddr=3fc8c000 size=01ac4h (  6852) load
+I (104) esp_image: segment 2: paddr=00025aa8 vaddr=40380000 size=0a570h ( 42352) load
+I (116) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=4a204h (303620) map
+I (183) esp_image: segment 4: paddr=0007a22c vaddr=4038a570 size=018c4h (  6340) load
+I (189) boot: Loaded app from partition at offset 0x10000
+I (189) boot: Disabling RNG early entropy source...
+[0;32mI (201) cpu_start: Unicore app[0m
+[0;32mI (209) cpu_start: Pro cpu start user code[0m
+[0;32mI (209) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (210) app_init: Application information:[0m
+[0;32mI (212) app_init: Project name:     libespidf[0m
+[0;32mI (217) app_init: App version:      aa2dd76-dirty[0m
+[0;32mI (223) app_init: Compile time:     Nov  7 2025 14:53:48[0m
+[0;32mI (229) app_init: ELF file SHA256:  000000000...[0m
+[0;32mI (234) app_init: ESP-IDF:          v5.3.3[0m
+[0;32mI (239) efuse_init: Min chip rev:     v0.3[0m
+[0;32mI (244) efuse_init: Max chip rev:     v1.99 [0m
+[0;32mI (248) efuse_init: Chip rev:         v0.4[0m
+[0;32mI (253) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (261) heap_init: At 3FC8EA90 len 00031570 (197 KiB): RAM[0m
+[0;32mI (267) heap_init: At 3FCC0000 len 0001C710 (113 KiB): Retention RAM[0m
+[0;32mI (274) heap_init: At 3FCDC710 len 00002950 (10 KiB): Retention RAM[0m
+[0;32mI (281) heap_init: At 50000000 len 00001FE8 (7 KiB): RTCRAM[0m
+[0;32mI (288) spi_flash: detected chip: generic[0m
+[0;32mI (292) spi_flash: flash io: dio[0m
+[0;33mW (296) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[0;33mW (306) timer_group: legacy driver is deprecated, please migrate to `driver/gptimer.h`[0m
+[0;32mI (315) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (322) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (329) main_task: Started on CPU0[0m
+[0;32mI (329) main_task: Calling app_main()[0m
+[0;32mI (329) gpio: GPIO[2]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (339) rx: SAMPLE_STEP: 100[0m
+[0;32mI (9959) rx: start received[0m
+[0;32mI (9959) rx::parser: Hi[0m
+[0;32mI (9959) rx::parser: Lo[0m
+[0;32mI (9959) rx::parser: Hi[0m
+[0;32mI (9959) rx::parser: Lo[0m
+[0;32mI (9959) rx::parser: Hi[0m
+[0;32mI (9969) rx::parser: Lo[0m
+[0;32mI (9969) rx::parser: Lo[0m
+[0;32mI (9969) rx::parser: Hi[0m
+[0;32mI (9979) rx::parser: Lo[0m
+[0;32mI (9979) rx::parser: Hi[0m
+[0;32mI (9979) rx::parser: Lo[0m
+[0;32mI (9989) rx::parser: Hi[0m
+[0;32mI (9989) rx::parser: Hi[0m
+[0;32mI (9989) rx::parser: Lo[0m
+[0;32mI (9999) rx::parser: Lo[0m
+[0;32mI (9999) rx::parser: Hi[0m
+[0;32mI (9999) rx::parser: Lo[0m
+[0;32mI (10009) rx::parser: Hi[0m
+[0;32mI (10009) rx::parser: Hi[0m
+[0;32mI (10009) rx::parser: Lo[0m
+[0;32mI (10009) rx::parser: Hi[0m
+[0;32mI (10019) rx::parser: Lo[0m
+[0;32mI (10019) rx::parser: Lo[0m
+[0;32mI (10019) rx::parser: Hi[0m
+[0;32mI (10029) rx::parser: Hi[0m
+[0;32mI (10029) rx::parser: Hi[0m
+[0;32mI (10029) rx::parser: Lo[0m
+[0;32mI (10039) rx::parser: Lo[0m
+[0;32mI (10039) rx::parser: Hi[0m
+[0;32mI (10039) rx::parser: Hi[0m
+[0;32mI (10049) rx::parser: Hi[0m
+[0;32mI (10049) rx::parser: Hi[0m
+[0;32mI (10049) rx::parser: Hi[0m
+[0;32mI (10059) rx::parser: Lo[0m
+[0;31mE (10059) rx: morse error! UnknownBitSequence[0m
+[0;32mI (11959) rx: start received[0m
+[0;32mI (11959) rx::parser: Hi[0m
+[0;32mI (11959) rx::parser: Lo[0m
+[0;32mI (11959) rx::parser: Hi[0m
+[0;32mI (11959) rx::parser: Lo[0m
+[0;32mI (11969) rx::parser: Hi[0m
+[0;32mI (11969) rx::parser: Lo[0m
+[0;32mI (11969) rx::parser: Lo[0m
+[0;32mI (11979) rx::parser: Hi[0m
+[0;32mI (11979) rx::parser: Lo[0m
+[0;32mI (11979) rx::parser: Hi[0m
+[0;32mI (11989) rx::parser: Lo[0m
+[0;32mI (11989) rx::parser: Hi[0m
+[0;32mI (11989) rx::parser: Hi[0m
+[0;32mI (11999) rx::parser: Lo[0m
+[0;32mI (11999) rx::parser: Lo[0m
+[0;32mI (11999) rx::parser: Hi[0m
+[0;32mI (12009) rx::parser: Lo[0m
+[0;32mI (12009) rx::parser: Hi[0m
+[0;32mI (12009) rx::parser: Hi[0m
+[0;32mI (12009) rx::parser: Lo[0m
+[0;32mI (12019) rx::parser: Hi[0m
+[0;32mI (12019) rx::parser: Lo[0m
+[0;32mI (12019) rx::parser: Lo[0m
+[0;32mI (12029) rx::parser: Hi[0m
+[0;32mI (12029) rx::parser: Lo[0m
+[0;32mI (12029) rx::parser: Hi[0m
+[0;32mI (12039) rx::parser: Lo[0m
+[0;32mI (12039) rx::parser: Lo[0m
+[0;32mI (12039) rx::parser: Hi[0m
+[0;32mI (12049) rx::parser: Hi[0m
+[0;32mI (12049) rx::parser: Hi[0m
+[0;32mI (12049) rx::parser: Hi[0m
+[0;32mI (12059) rx::parser: Lo[0m
+[0;32mI (12059) rx: SURI
+[0m
+[0;32mI (13959) rx: start received[0m
+[0;32mI (13959) rx::parser: Hi[0m
+[0;32mI (13959) rx::parser: Lo[0m
+[0;32mI (13959) rx::parser: Hi[0m
+[0;32mI (13959) rx::parser: Lo[0m
+[0;32mI (13969) rx::parser: Hi[0m
+[0;32mI (13969) rx::parser: Lo[0m
+[0;32mI (13969) rx::parser: Lo[0m
+[0;32mI (13979) rx::parser: Hi[0m
+[0;32mI (13979) rx::parser: Lo[0m
+[0;32mI (13979) rx::parser: Hi[0m
+[0;32mI (13989) rx::parser: Lo[0m
+[0;32mI (13989) rx::parser: Hi[0m
+[0;32mI (13989) rx::parser: Hi[0m
+[0;32mI (13999) rx::parser: Lo[0m
+[0;32mI (13999) rx::parser: Lo[0m
+[0;32mI (13999) rx::parser: Hi[0m
+[0;32mI (14009) rx::parser: Lo[0m
+[0;32mI (14009) rx::parser: Hi[0m
+[0;32mI (14009) rx::parser: Hi[0m
+[0;32mI (14019) rx::parser: Lo[0m
+[0;32mI (14019) rx::parser: Hi[0m
+[0;32mI (14019) rx::parser: Lo[0m
+[0;32mI (14029) rx::parser: Lo[0m
+[0;32mI (14029) rx::parser: Hi[0m
+[0;32mI (14029) rx::parser: Lo[0m
+[0;32mI (14039) rx::parser: Hi[0m
+[0;32mI (14039) rx::parser: Lo[0m
+[0;32mI (14039) rx::parser: Lo[0m
+[0;32mI (14049) rx::parser: Hi[0m
+[0;32mI (14049) rx::parser: Hi[0m
+[0;32mI (14049) rx::parser: Hi[0m
+[0;32mI (14049) rx::parser: Hi[0m
+[0;32mI (14059) rx::parser: Lo[0m
+[0;32mI (14059) rx: SURI
+[0m
+[0;32mI (15959) rx: start received[0m
+[0;32mI (15959) rx::parser: Hi[0m
+[0;32mI (15959) rx::parser: Lo[0m
+[0;32mI (15959) rx::parser: Hi[0m
+[0;32mI (15969) rx::parser: Lo[0m
+[0;32mI (15969) rx::parser: Hi[0m
+[0;32mI (15969) rx::parser: Lo[0m
+[0;32mI (15979) rx::parser: Lo[0m
+[0;32mI (15979) rx::parser: Hi[0m
+[0;32mI (15979) rx::parser: Lo[0m
+[0;32mI (15989) rx::parser: Hi[0m
+[0;32mI (15989) rx::parser: Lo[0m
+[0;32mI (15989) rx::parser: Hi[0m
+[0;32mI (15999) rx::parser: Hi[0m
+[0;32mI (15999) rx::parser: Lo[0m
+[0;32mI (15999) rx::parser: Lo[0m
+[0;32mI (16009) rx::parser: Hi[0m
+[0;32mI (16009) rx::parser: Lo[0m
+[0;32mI (16009) rx::parser: Hi[0m
+[0;32mI (16009) rx::parser: Hi[0m
+[0;32mI (16019) rx::parser: Lo[0m
+[0;32mI (16019) rx::parser: Hi[0m
+[0;32mI (16019) rx::parser: Lo[0m
+[0;32mI (16029) rx::parser: Lo[0m
+[0;32mI (16029) rx::parser: Hi[0m
+[0;32mI (16029) rx::parser: Lo[0m
+[0;32mI (16039) rx::parser: Hi[0m
+[0;32mI (16039) rx::parser: Lo[0m
+[0;32mI (16039) rx::parser: Lo[0m
+[0;32mI (16049) rx::parser: Hi[0m
+[0;32mI (16049) rx::parser: Hi[0m
+[0;32mI (16049) rx::parser: Hi[0m
+[0;32mI (16059) rx::parser: Hi[0m
+[0;32mI (16059) rx::parser: Lo[0m
+[0;32mI (16059) rx: SURI
+[0m
+[0;32mI (17969) rx: start received[0m
+[0;32mI (17969) rx::parser: Hi[0m
+[0;32mI (17969) rx::parser: Lo[0m
+[0;32mI (17969) rx::parser: Hi[0m
+[0;32mI (17969) rx::parser: Lo[0m
+[0;32mI (17979) rx::parser: Hi[0m
+[0;32mI (17979) rx::parser: Lo[0m
+[0;32mI (17979) rx::parser: Lo[0m
+[0;32mI (17989) rx::parser: Hi[0m
+[0;32mI (17989) rx::parser: Lo[0m
+[0;32mI (17989) rx::parser: Hi[0m
+[0;32mI (17999) rx::parser: Lo[0m
+[0;32mI (17999) rx::parser: Hi[0m
+[0;32mI (17999) rx::parser: Hi[0m
+[0;32mI (17999) rx::parser: Lo[0m
+[0;32mI (18009) rx::parser: Lo[0m
+[0;32mI (18009) rx::parser: Hi[0m
+[0;32mI (18009) rx::parser: Lo[0m
+[0;32mI (18019) rx::parser: Hi[0m
+[0;32mI (18019) rx::parser: Hi[0m
+[0;32mI (18019) rx::parser: Lo[0m
+[0;32mI (18029) rx::parser: Hi[0m
+[0;32mI (18029) rx::parser: Lo[0m
+[0;32mI (18029) rx::parser: Lo[0m
+[0;32mI (18039) rx::parser: Hi[0m
+[0;32mI (18039) rx::parser: Lo[0m
+[0;32mI (18039) rx::parser: Hi[0m
+[0;32mI (18049) rx::parser: Lo[0m
+[0;32mI (18049) rx::parser: Lo[0m
+[0;32mI (18049) rx::parser: Hi[0m
+[0;32mI (18059) rx::parser: Hi[0m
+[0;32mI (18059) rx::parser: Hi[0m
+[0;32mI (18059) rx::parser: Hi[0m
+[0;32mI (18069) rx::parser: Lo[0m
+[0;32mI (18069) rx: SURI
+[0m
+[0;32mI (19969) rx: start received[0m
+[0;32mI (19969) rx::parser: Hi[0m
+[0;32mI (19969) rx::parser: Lo[0m
+[0;32mI (19969) rx::parser: Hi[0m
+[0;32mI (19969) rx::parser: Lo[0m
+[0;32mI (19979) rx::parser: Hi[0m
+[0;32mI (19979) rx::parser: Lo[0m
+[0;32mI (19979) rx::parser: Lo[0m
+[0;32mI (19989) rx::parser: Hi[0m
+[0;32mI (19989) rx::parser: Lo[0m
+[0;32mI (19989) rx::parser: Hi[0m
+[0;32mI (19999) rx::parser: Lo[0m
+[0;32mI (19999) rx::parser: Hi[0m
+[0;32mI (19999) rx::parser: Hi[0m
+[0;32mI (20009) rx::parser: Lo[0m
+[0;32mI (20009) rx::parser: Lo[0m
+[0;32mI (20009) rx::parser: Hi[0m
+[0;32mI (20019) rx::parser: Lo[0m
+[0;32mI (20019) rx::parser: Hi[0m
+[0;32mI (20019) rx::parser: Hi[0m
+[0;32mI (20029) rx::parser: Lo[0m
+[0;32mI (20029) rx::parser: Hi[0m
+[0;32mI (20029) rx::parser: Lo[0m
+[0;32mI (20039) rx::parser: Lo[0m
+[0;32mI (20039) rx::parser: Hi[0m
+[0;32mI (20039) rx::parser: Lo[0m
+[0;32mI (20049) rx::parser: Hi[0m
+[0;32mI (20049) rx::parser: Lo[0m
+[0;32mI (20049) rx::parser: Lo[0m
+[0;32mI (20049) rx::parser: Hi[0m
+[0;32mI (20059) rx::parser: Hi[0m
+[0;32mI (20059) rx::parser: Hi[0m
+[0;32mI (20059) rx::parser: Hi[0m
+[0;32mI (20069) rx::parser: Lo[0m
+[0;32mI (20069) rx: SURI
+[0m
+[0;32mI (21969) rx: start received[0m
+[0;32mI (21969) rx::parser: Hi[0m
+[0;32mI (21969) rx::parser: Lo[0m
+[0;32mI (21969) rx::parser: Hi[0m
+[0;32mI (21979) rx::parser: Lo[0m
+[0;32mI (21979) rx::parser: Hi[0m
+[0;32mI (21979) rx::parser: Lo[0m
+[0;32mI (21989) rx::parser: Lo[0m
+[0;32mI (21989) rx::parser: Hi[0m
+[0;32mI (21989) rx::parser: Lo[0m
+[0;32mI (21999) rx::parser: Hi[0m
+[0;32mI (21999) rx::parser: Lo[0m
+[0;32mI (21999) rx::parser: Hi[0m
+[0;32mI (21999) rx::parser: Hi[0m
+[0;32mI (22009) rx::parser: Lo[0m
+[0;32mI (22009) rx::parser: Lo[0m
+[0;32mI (22009) rx::parser: Hi[0m
+[0;32mI (22019) rx::parser: Lo[0m
+[0;32mI (22019) rx::parser: Hi[0m
+[0;32mI (22019) rx::parser: Hi[0m
+[0;32mI (22029) rx::parser: Lo[0m
+[0;32mI (22029) rx::parser: Hi[0m
+[0;32mI (22029) rx::parser: Lo[0m
+[0;32mI (22039) rx::parser: Lo[0m
+[0;32mI (22039) rx::parser: Hi[0m
+[0;32mI (22039) rx::parser: Lo[0m
+[0;32mI (22049) rx::parser: Hi[0m
+[0;32mI (22049) rx::parser: Lo[0m
+[0;32mI (22049) rx::parser: Lo[0m
+[0;32mI (22059) rx::parser: Hi[0m
+[0;32mI (22059) rx::parser: Hi[0m
+[0;32mI (22059) rx::parser: Hi[0m
+[0;32mI (22069) rx::parser: Hi[0m
+[0;32mI (22069) rx::parser: Lo[0m
+[0;32mI (22069) rx: SURI
+[0m
+[0;32mI (23979) rx: start received[0m
+[0;32mI (23979) rx::parser: Hi[0m
+[0;32mI (23979) rx::parser: Lo[0m
+[0;32mI (23979) rx::parser: Hi[0m
+[0;32mI (23979) rx::parser: Lo[0m
+[0;32mI (23979) rx::parser: Hi[0m
+[0;32mI (23979) rx::parser: Lo[0m
+[0;32mI (23989) rx::parser: Lo[0m
+[0;32mI (23989) rx::parser: Hi[0m
+[0;32mI (23989) rx::parser: Lo[0m
+[0;32mI (23999) rx::parser: Hi[0m
+[0;32mI (23999) rx::parser: Lo[0m
+[0;32mI (23999) rx::parser: Hi[0m
+[0;32mI (24009) rx::parser: Hi[0m
+[0;32mI (24009) rx::parser: Lo[0m
+[0;32mI (24009) rx::parser: Lo[0m
+[0;32mI (24019) rx::parser: Hi[0m
+[0;32mI (24019) rx::parser: Lo[0m
+[0;32mI (24019) rx::parser: Hi[0m
+[0;32mI (24029) rx::parser: Hi[0m
+[0;32mI (24029) rx::parser: Lo[0m
+[0;32mI (24029) rx::parser: Hi[0m
+[0;32mI (24039) rx::parser: Lo[0m
+[0;32mI (24039) rx::parser: Lo[0m
+[0;32mI (24039) rx::parser: Hi[0m
+[0;32mI (24049) rx::parser: Lo[0m
+[0;32mI (24049) rx::parser: Hi[0m
+[0;32mI (24049) rx::parser: Lo[0m
+[0;32mI (24049) rx::parser: Lo[0m
+[0;32mI (24059) rx::parser: Hi[0m
+[0;32mI (24059) rx::parser: Hi[0m
+[0;32mI (24059) rx::parser: Hi[0m
+[0;32mI (24069) rx::parser: Hi[0m
+[0;32mI (24069) rx::parser: Lo[0m
+[0;32mI (24069) rx: SURI
+[0m
+[0;32mI (25979) rx: start received[0m
+[0;32mI (25979) rx::parser: Hi[0m
+[0;32mI (25979) rx::parser: Lo[0m
+[0;32mI (25979) rx::parser: Hi[0m
+[0;32mI (25979) rx::parser: Lo[0m
+[0;32mI (25979) rx::parser: Hi[0m
+[0;32mI (25989) rx::parser: Lo[0m
+[0;32mI (25989) rx::parser: Lo[0m
+[0;32mI (25989) rx::parser: Hi[0m
+[0;32mI (25999) rx::parser: Lo[0m
+[0;32mI (25999) rx::parser: Hi[0m
+[0;32mI (25999) rx::parser: Lo[0m
+[0;32mI (25999) rx::parser: Hi[0m
+[0;32mI (26009) rx::parser: Hi[0m
+[0;32mI (26009) rx::parser: Lo[0m
+[0;32mI (26009) rx::parser: Lo[0m
+[0;32mI (26019) rx::parser: Hi[0m
+[0;32mI (26019) rx::parser: Lo[0m
+[0;32mI (26019) rx::parser: Hi[0m
+[0;32mI (26029) rx::parser: Hi[0m
+[0;32mI (26029) rx::parser: Lo[0m
+[0;32mI (26029) rx::parser: Hi[0m
+[0;32mI (26039) rx::parser: Lo[0m
+[0;32mI (26039) rx::parser: Lo[0m
+[0;32mI (26039) rx::parser: Hi[0m
+[0;32mI (26049) rx::parser: Lo[0m
+[0;32mI (26049) rx::parser: Hi[0m
+[0;32mI (26049) rx::parser: Lo[0m
+[0;32mI (26059) rx::parser: Lo[0m
+[0;32mI (26059) rx::parser: Hi[0m
+[0;32mI (26059) rx::parser: Hi[0m
+[0;32mI (26069) rx::parser: Hi[0m
+[0;32mI (26069) rx::parser: Hi[0m
+[0;32mI (26069) rx::parser: Lo[0m
+[0;32mI (26079) rx: SURI
+[0m

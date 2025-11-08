@@ -29,19 +29,10 @@ pub enum MorseError {
 
 /// time step defined in period length
 // pub const TIME_STEP_MICROS: u64 = 25;
-pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
+// pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
+// pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
+pub const TIME_STEP_MICROS: u64 = 50;
 
-// pub const START_SEQUENCE: [Bit; 9] = [
-//     Bit::Hi,
-//     Bit::Hi,
-//     Bit::Lo,
-//     Bit::Lo,
-//     Bit::Hi,
-//     Bit::Hi,
-//     Bit::Hi,
-//     Bit::Lo,
-//     Bit::Lo,
-// ];
 pub const START_SEQUENCE: [Bit; 12] = [
     Bit::Hi,
     Bit::Hi,
@@ -49,7 +40,7 @@ pub const START_SEQUENCE: [Bit; 12] = [
     Bit::Hi,
     Bit::Hi,
     Bit::Hi,
-    Bit::Hi,
+    Bit::Lo,
     Bit::Lo,
     Bit::Lo,
     Bit::Lo,
