@@ -108,7 +108,7 @@ impl Parser<Processing> {
         let mut msg = String::new();
 
         for bit_slice in self.morse_seq.split(|e| *e == MorseBit::CharBreak) {
-            info!("slice: {bit_slice:?}");
+            // info!("slice: {bit_slice:?}");
             let c = char::from_morse_slice(bit_slice)?;
             msg.push(c);
         }
