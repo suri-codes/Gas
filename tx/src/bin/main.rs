@@ -20,8 +20,8 @@ extern crate alloc;
 // For more information see: <https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/app_image_format.html#application-description>
 esp_bootloader_esp_idf::esp_app_desc!();
 
-const MSG: &'static str = "WHAT the actual fuck dude We are cooking\n";
-// const MSG: &'static str = "na\n";
+// const MSG: &'static str = "WHAT the actual fuck dude We are cooking\n";
+const MSG: &'static str = "na\n";
 // const MSG: &'static str = "Surendra\n";
 
 #[main]
@@ -66,7 +66,7 @@ fn main() -> ! {
         info!("transmission time: {:#?}", start.elapsed());
         let char_per_sec = (MSG.len() as f64 * 1.0e6) / elapsed_micros as f64;
         info!("chars per second: {:#?}", char_per_sec);
-        spin_wait(Duration::from_secs(1));
+        spin_wait(Duration::from_secs(2));
     }
 }
 
