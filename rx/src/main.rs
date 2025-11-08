@@ -11,7 +11,7 @@ use crate::parser::{ListeningForMessage, Parser, Processing};
 // const SAMPLE_HERTZ: u64 = 1_000;
 // const SAMPLE_HERTZ: u64 = 1980;
 // const SAMPLE_HERTZ: u64 = 5015;
-const SAMPLE_HERTZ: u64 = 38_288;
+const SAMPLE_HERTZ: u64 = 47_287;
 // const SAMPLE_HERTZ: u64 = 20_000;
 // const SAMPLE_HERTZ: u64 = 10_000;
 
@@ -63,7 +63,7 @@ fn main() -> anyhow::Result<()> {
                         info!("{msg}");
                     }
                     Err(e) => {
-                        // error!("failed to parse message! {e:?}");
+                        error!("failed to parse message! {e:?}");
                     }
                 }
 
@@ -77,7 +77,7 @@ fn main() -> anyhow::Result<()> {
                         message_listener = None;
                     }
                     Some(Err(e)) => {
-                        // error!("morse error! {e:?}");
+                        error!("morse error! {e:?}");
                         start_listener = Parser::default();
                         message_parser = None;
                         message_listener = None;
@@ -86,7 +86,7 @@ fn main() -> anyhow::Result<()> {
                     None => continue,
                 }
             } else if let Some(listener) = start_listener.process_start_bit(bit) {
-                // info!("start received");
+                info!("start received");
                 message_listener = Some(listener);
                 start_listener = Parser::default();
             }

@@ -31,7 +31,7 @@ pub enum MorseError {
 // pub const TIME_STEP_MICROS: u64 = 25;
 // pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
 // pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
-pub const TIME_STEP_MICROS: u64 = 25;
+pub const TIME_STEP_MICROS: u64 = 20;
 
 pub const START_SEQUENCE: [Bit; 12] = [
     Bit::Hi,

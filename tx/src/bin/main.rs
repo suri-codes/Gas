@@ -90,7 +90,7 @@ fn main() -> ! {
         info!("char bits : {:#?}", char_bits);
         info!("bits per second  : {:#?}", bits_per_sec);
         info!("total bits : {:#?}", bits);
-        // spin_wait(Duration::from_secs(2));
+        spin_wait(Duration::from_secs(2));
     }
 }
 
