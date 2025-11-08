@@ -21,7 +21,7 @@ extern crate alloc;
 esp_bootloader_esp_idf::esp_app_desc!();
 
 // const MSG: &'static str = "WHAT the actual fuck dude We are cooking\n";
-// const MSG: &'static str = "na\n";
+// const MSG: &'static str = "aaaaaaaaaaaaaaaaaa\n";
 const MSG: &'static str = "surendra\n";
 
 #[main]

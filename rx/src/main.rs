@@ -4,11 +4,14 @@ use log::error;
 
 use crate::parser::{ListeningForMessage, Parser, Processing};
 
+// const SAMPLE_HERTZ: u64 = 80_000;
 const SAMPLE_HERTZ: u64 = 50_000;
+// const SAMPLE_HERTZ: u64 = 75_000;
 
 const SAMPLE_PERIOD: u64 = 1_000_000 / SAMPLE_HERTZ;
 
 const SAMPLE_STEP: u64 = morse::TIME_STEP_MICROS / SAMPLE_PERIOD;
+// const SAMPLE_STEP: u64 = 100;
 
 mod parser;
 fn main() -> anyhow::Result<()> {
