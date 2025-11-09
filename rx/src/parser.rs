@@ -1,15 +1,10 @@
-// struct Parser<ParserState> {
-//     bit_buf: BitSequece,
-//     morse_bit_buf: MorseBitSequence,
-//     message_buf: String,
-// }
-
 use std::{collections::VecDeque, marker::PhantomData};
 
-use log::info;
 use morse::{
     Bit, BitSequece, MorseBit, MorseBitSequence, MorseConversion, MorseError, START_SEQUENCE,
 };
+
+use crate::HIGH_THRESHOLD;
 
 pub struct WaitingForStart;
 
@@ -45,10 +40,12 @@ impl Parser<WaitingForStart> {
     }
 
     pub fn process_light_val(&mut self, raw_val: u16) -> Option<Parser<ListeningForMessage>> {
-        let bit = if raw_val < 100 { Bit::Lo } else { Bit::Hi };
+        let bit = if raw_val < HIGH_THRESHOLD {
+            Bit::Lo
+        } else {
+            Bit::Hi
+        };
         let start_queue = self.start_queue.as_mut().unwrap();
-        // we want to process start as a sliding window
-        // here we do sliding window
         if start_queue.len() == START_SEQUENCE.len() {
             start_queue.pop_front();
             start_queue.push_back(bit);
@@ -79,7 +76,11 @@ impl Parser<ListeningForMessage> {
         if self.raw_val_buf.push(raw_val).is_err() {
             return Some(Err(MorseError::FullBuffer));
         }
-        let bit = if raw_val < 100 { Bit::Lo } else { Bit::Hi };
+        let bit = if raw_val < HIGH_THRESHOLD {
+            Bit::Lo
+        } else {
+            Bit::Hi
+        };
 
         if self.bit_seq.push(bit).is_err() {
             return Some(Err(MorseError::FullBuffer));
@@ -90,9 +91,9 @@ impl Parser<ListeningForMessage> {
                 Ok(m_bit) => {
                     self.bit_seq.clear();
 
-                    self.morse_seq
-                        .push(m_bit)
-                        .expect("should never run out of capacity");
+                    if self.morse_seq.push(m_bit).is_err() {
+                        return Some(Err(MorseError::FullBuffer));
+                    }
 
                     if m_bit == MorseBit::LineBreak {
                         return Some(Ok(Parser {
@@ -119,7 +120,6 @@ impl Parser<Processing> {
         let mut msg = String::new();
 
         for bit_slice in self.morse_seq.split(|e| *e == MorseBit::CharBreak) {
-            // info!("slice: {bit_slice:?}");
             let c = char::from_morse_slice(bit_slice)?;
             msg.push(c);
         }

@@ -6,12 +6,10 @@
     holding buffers for the duration of a data transfer."
 )]
 
-use core::iter::once;
-
 use defmt::{error, info};
 use esp_hal::clock::CpuClock;
 use esp_hal::delay::Delay;
-use esp_hal::gpio::{Output, OutputConfig};
+use esp_hal::gpio::{Input, InputConfig, Output, OutputConfig};
 use esp_hal::main;
 use esp_hal::time::{Duration, Instant};
 use morse::{
@@ -35,6 +33,7 @@ fn main() -> ! {
         esp_hal::gpio::Level::Low,
         OutputConfig::default(),
     );
+    let start_button = Input::new(peripherals.GPIO9, InputConfig::default());
 
     esp_alloc::heap_allocator!(#[esp_hal::ram(reclaimed)] size: 65536);
 
@@ -49,8 +48,47 @@ fn main() -> ! {
 
     let mut running_avg_recv_freq: f64 = 0.0;
     let mut transmits = 0;
+
+    info!("Calibrating...");
+    for _ in 1..1000 {
+        for bit in &START_SEQUENCE {
+            hold_bit_for_time_step(&mut led, bit, &delay);
+        }
+
+        let char_start = Instant::now();
+
+        for bit in &data_packet {
+            hold_bit_for_time_step(&mut led, bit, &delay);
+        }
+
+        let elapsed_char_micros = char_start.elapsed().as_micros();
+
+        let char_bits = data_packet.len();
+
+        let expected_time = char_bits as usize * TIME_STEP_MICROS as usize;
+
+        // should calculate what the ideal receiver freq should be
+        let optimal_receiver_freq = 1e6
+            / (((elapsed_char_micros - expected_time as u64) as f64 / char_bits as f64)
+                + TIME_STEP_MICROS as f64);
+
+        transmits += 1;
+        running_avg_recv_freq = running_avg_recv_freq
+            + ((optimal_receiver_freq - running_avg_recv_freq) / transmits as f64);
+    }
+    info!("optimal recv freq :  {} Hz", running_avg_recv_freq);
+    info!("Press boot button to start transmitting message!");
+
+    let mut running_avg_recv_freq: f64 = 0.0;
+    let mut transmits = 0;
+
     loop {
-        // send start sequence
+        if start_button.is_low() {
+            break;
+        } // send start sequence
+    }
+
+    loop {
         info!("sending start sequence!");
         let bit_start = Instant::now();
         for bit in &START_SEQUENCE {
@@ -94,11 +132,12 @@ fn main() -> ! {
         // print_data_packet(&data_packet);
 
         // print the light vals we sent
-        // delay.delay(Duration::from_secs(1));
-        delay.delay(Duration::from_millis(500));
+        // delay.delay(Duration::from_secs(2));
+        delay.delay(Duration::from_millis(120));
     }
 }
 
+#[allow(unused)]
 fn print_data_packet(data_packet: &DataPacket) {
     for bit in data_packet {
         match bit {
@@ -111,7 +150,7 @@ fn print_data_packet(data_packet: &DataPacket) {
 fn form_data_packet() -> Result<DataPacket, MorseError> {
     let mut packet = DataPacket::new();
 
-    for char in MSG.to_lowercase().chars().into_iter() {
+    for char in MSG.to_lowercase().chars() {
         let m_seq = char
             .to_morse_bit_sequence()
             .expect("should be a valid bit sequence");

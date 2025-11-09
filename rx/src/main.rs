@@ -1,24 +1,14 @@
 use ::log::info;
 use esp_idf_svc::hal::units::Hertz;
 use log::error;
-use morse::{Bit, TIME_STEP_MICROS};
 
 use crate::parser::{ListeningForMessage, Parser, Processing};
 
-// max it allows is 80_000
+const SAMPLE_HERTZ: u64 = 83262;
 
-// const SAMPLE_HERTZ: u64 = 1_000;
-// const SAMPLE_HERTZ: u64 = 9_894;
-// const SAMPLE_HERTZ: u64 = 19_575;
-// const SAMPLE_HERTZ: u64 = 38_332;
-// const SAMPLE_HERTZ: u64 = 47_567;
-// const SAMPLE_HERTZ: u64 = 62_428;
-// const SAMPLE_HERTZ: u64 = 76_825;
-const SAMPLE_HERTZ: u64 = 83294;
-//
-
-// const SAMPLE_STEP: u64 = morse::TIME_STEP_MICROS / SAMPLE_PERIOD;
 const SAMPLE_STEP: u64 = 100;
+
+const HIGH_THRESHOLD: u16 = 210;
 
 mod parser;
 fn main() -> anyhow::Result<()> {
@@ -52,7 +42,7 @@ fn main() -> anyhow::Result<()> {
 
     loop {
         let Ok(num_read) = adc.read(&mut samples, 10) else {
-            // error!("Failed to perform adc read!");
+            // its ok if we cant read from the adc
             continue;
         };
 
@@ -61,7 +51,6 @@ fn main() -> anyhow::Result<()> {
                 match parser.message() {
                     Ok(msg) => {
                         successful_reads += 1;
-                        info!("Message: {msg}");
                         let perf_msg = morse::MSG.to_lowercase();
                         if msg == perf_msg {
                             perfect_reads += 1;
@@ -71,20 +60,19 @@ fn main() -> anyhow::Result<()> {
                         let read_rate: f32 = (successful_reads as f32 / attempts as f32) * 100.0;
                         let perfect_rate: f32 = (perfect_reads as f32 / attempts as f32) * 100.0;
 
+                        info!("Message          : {msg}");
                         info!("Read accuracy    : {read_rate}%");
                         info!("Perfect accuracy : {perfect_rate}%");
                         info!("Attempts         : {attempts}");
                         println!("\n\n")
                     }
                     Err(e) => {
-                        // error!("failed to parse message! {e:?}");
-                        // info!("light vals: {:#?}", parser.raw_val_buf);
-                        // info!("bit_seq: {:#?}", parser.bit_seq);
+                        error!("failed to parse message! {e:?}");
                         // info!("morse_seq: {:#?}", parser.morse_seq);
+                        // info!("bit_seq: {:#?}", parser.bit_seq);
+                        // info!("light vals: {:#?}", parser.raw_val_buf);
                     }
                 }
-                // info!("light vals: {:#?}", parser.raw_val_buf);
-
                 message_listener = None;
                 message_parser = None;
                 start_listener = Parser::default();
@@ -95,9 +83,9 @@ fn main() -> anyhow::Result<()> {
                         message_listener = None;
                     }
                     Some(Err(e)) => {
-                        // error!("morse error! {e:?}");
-                        // info!("bit_seq: {:#?}", listener.bit_seq);
+                        error!("Failed during measurement! {e:?}");
                         // info!("morse_seq: {:#?}", listener.morse_seq);
+                        // info!("bit_seq: {:#?}", listener.bit_seq);
                         // info!("light vals: {:#?}", listener.raw_val_buf);
                         start_listener = Parser::default();
                         message_parser = None;
@@ -107,10 +95,9 @@ fn main() -> anyhow::Result<()> {
                     None => continue,
                 }
             } else if let Some(listener) = start_listener.process_light_val(measurement.data()) {
-                // info!("start received");
-                attempts += 1;
                 message_listener = Some(listener);
                 start_listener = Parser::default();
+                attempts += 1;
             }
         }
     }

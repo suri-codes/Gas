@@ -27,8 +27,6 @@ pub enum MorseError {
     FullBuffer,
 }
 
-/// time step defined in period length
-// pub const TIME_STEP_MICROS: u64 = 25;
 // pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
 // pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
 // pub const TIME_STEP_MICROS: u64 = 1000;
@@ -37,31 +35,28 @@ pub enum MorseError {
 // pub const TIME_STEP_MICROS: u64 = 20;
 // pub const TIME_STEP_MICROS: u64 = 15;
 pub const TIME_STEP_MICROS: u64 = 11;
+// pub const TIME_STEP_MICROS: u64 = 10;
 
-// pub const MSG: &'static str = "suri";
-// pub const MSG: &'static str = "Hello ESP32";
-// pub const MSG: &'static str = "Hello";
-pub const MSG: &'static str = "eeeeeeeeeeeeeeeeeeeeeeeeeeee";
-// pub const MSG: &'static str = "Hi";
+// pub const MSG: &str = "Surendra";
+pub const MSG: &str = "suri.codes";
+// pub const MSG: &str = "Hello ESP32";
+// pub const MSG: &str = "eeeeeeeeeeeeeeeeeeeeeeeeee";
 
-pub const START_SEQUENCE: [Bit; 8] = [
+pub const START_SEQUENCE: [Bit; 10] = [
     Bit::Hi,
     Bit::Hi,
     Bit::Hi,
     Bit::Hi,
     Bit::Hi,
-    Bit::Hi,
-    // Bit::Hi,
-    // Bit::Hi,
-    // Bit::Hi,
-    // Bit::Hi,
     Bit::Lo,
     Bit::Lo,
-    // Bit::Lo,
-    // Bit::Lo,
-    // Bit::Hi,
-    // Bit::Hi,
+    Bit::Lo,
+    Bit::Hi,
+    Bit::Hi,
 ];
+
+// gets picked up really easily, but corrupts data
+// pub const START_SEQUENCE: [Bit; 2] = [Bit::Hi, Bit::Hi];
 
 pub trait MorseConversion {
     fn to_morse_bit_sequence(&self) -> Result<MorseBitSequence, MorseError>;
@@ -130,11 +125,9 @@ impl TryFrom<BitSequece> for MorseBit {
         }
 
         if value.starts_with(&[Hi, Lo]) && value.len() == 2 {
-            // return Ok(Dash);
             return Ok(CharBreak);
         }
         if value.starts_with(&[Hi, Hi, Lo]) && value.len() == 3 {
-            // return Ok(CharBreak);
             return Ok(Dash);
         }
         if value.starts_with(&[Hi, Hi, Hi, Lo]) && value.len() == 4 {
@@ -151,34 +144,6 @@ impl TryFrom<BitSequece> for MorseBit {
 pub const MORSE_TABLE: [&[MorseBit]; 128] = {
     let mut table = [&[] as &[MorseBit]; 128];
     use MorseBit::*;
-
-    // A-Z
-    table[b'A' as usize] = &[Dot, Dash]; // .-
-    table[b'B' as usize] = &[Dash, Dot, Dot, Dot]; // -...
-    table[b'C' as usize] = &[Dash, Dot, Dash, Dot]; // -.-.
-    table[b'D' as usize] = &[Dash, Dot, Dot]; // -..
-    table[b'E' as usize] = &[Dot]; // .
-    table[b'F' as usize] = &[Dot, Dot, Dash, Dot]; // ..-.
-    table[b'G' as usize] = &[Dash, Dash, Dot]; // --.
-    table[b'H' as usize] = &[Dot, Dot, Dot, Dot]; // ....
-    table[b'I' as usize] = &[Dot, Dot]; // ..
-    table[b'J' as usize] = &[Dot, Dash, Dash, Dash]; // .---
-    table[b'K' as usize] = &[Dash, Dot, Dash]; // -.-
-    table[b'L' as usize] = &[Dot, Dash, Dot, Dot]; // .-..
-    table[b'M' as usize] = &[Dash, Dash]; // --
-    table[b'N' as usize] = &[Dash, Dot]; // -.
-    table[b'O' as usize] = &[Dash, Dash, Dash]; // ---
-    table[b'P' as usize] = &[Dot, Dash, Dash, Dot]; // .--.
-    table[b'Q' as usize] = &[Dash, Dash, Dot, Dash]; // --.-
-    table[b'R' as usize] = &[Dot, Dash, Dot]; // .-.
-    table[b'S' as usize] = &[Dot, Dot, Dot]; // ...
-    table[b'T' as usize] = &[Dash]; // -
-    table[b'U' as usize] = &[Dot, Dot, Dash]; // ..-
-    table[b'V' as usize] = &[Dot, Dot, Dot, Dash]; // ...-
-    table[b'W' as usize] = &[Dot, Dash, Dash]; // .--
-    table[b'X' as usize] = &[Dash, Dot, Dot, Dash]; // -..-
-    table[b'Y' as usize] = &[Dash, Dot, Dash, Dash]; // -.--
-    table[b'Z' as usize] = &[Dash, Dash, Dot, Dot]; // --..
 
     // a-z (lowercase)
     table[b'a' as usize] = &[Dot, Dash];
@@ -209,25 +174,24 @@ pub const MORSE_TABLE: [&[MorseBit]; 128] = {
     table[b'z' as usize] = &[Dash, Dash, Dot, Dot];
 
     // 0-9
-    table[b'0' as usize] = &[Dash, Dash, Dash, Dash, Dash]; // -----
-    table[b'1' as usize] = &[Dot, Dash, Dash, Dash, Dash]; // .----
-    table[b'2' as usize] = &[Dot, Dot, Dash, Dash, Dash]; // ..---
-    table[b'3' as usize] = &[Dot, Dot, Dot, Dash, Dash]; // ...--
-    table[b'4' as usize] = &[Dot, Dot, Dot, Dot, Dash]; // ....-
-    table[b'5' as usize] = &[Dot, Dot, Dot, Dot, Dot]; // .....
-    table[b'6' as usize] = &[Dash, Dot, Dot, Dot, Dot]; // -....
-    table[b'7' as usize] = &[Dash, Dash, Dot, Dot, Dot]; // --...
-    table[b'8' as usize] = &[Dash, Dash, Dash, Dot, Dot]; // ---..
-    table[b'9' as usize] = &[Dash, Dash, Dash, Dash, Dot]; // ----.
+    table[b'0' as usize] = &[Dash, Dash, Dash, Dash, Dash];
+    table[b'1' as usize] = &[Dot, Dash, Dash, Dash, Dash];
+    table[b'2' as usize] = &[Dot, Dot, Dash, Dash, Dash];
+    table[b'3' as usize] = &[Dot, Dot, Dot, Dash, Dash];
+    table[b'4' as usize] = &[Dot, Dot, Dot, Dot, Dash];
+    table[b'5' as usize] = &[Dot, Dot, Dot, Dot, Dot];
+    table[b'6' as usize] = &[Dash, Dot, Dot, Dot, Dot];
+    table[b'7' as usize] = &[Dash, Dash, Dot, Dot, Dot];
+    table[b'8' as usize] = &[Dash, Dash, Dash, Dot, Dot];
+    table[b'9' as usize] = &[Dash, Dash, Dash, Dash, Dot];
+
+    table[b'.' as usize] = &[Dot, Dash, Dot, Dash, Dot, Dash];
 
     table
 };
 
 use MorseBit::*;
 pub const INVERSE_MORSE_TABLE: &[(&[MorseBit], char)] = &[
-    (&[CharBreak], '\0'),
-    (&[LineBreak], '\n'),
-    (&[WordBreak], ' '),
     (&[Dot, Dash], 'A'),
     (&[Dash, Dot, Dot, Dot], 'B'),
     (&[Dash, Dot, Dash, Dot], 'C'),
@@ -264,4 +228,8 @@ pub const INVERSE_MORSE_TABLE: &[(&[MorseBit], char)] = &[
     (&[Dash, Dash, Dot, Dot, Dot], '7'),
     (&[Dash, Dash, Dash, Dot, Dot], '8'),
     (&[Dash, Dash, Dash, Dash, Dot], '9'),
+    (&[Dot, Dash, Dot, Dash, Dot, Dash], '.'),
+    (&[CharBreak], '\0'),
+    (&[LineBreak], '\n'),
+    (&[WordBreak], ' '),
 ];
