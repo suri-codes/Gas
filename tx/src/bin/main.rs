@@ -21,7 +21,7 @@ extern crate alloc;
 
 esp_bootloader_esp_idf::esp_app_desc!();
 
-type DataPacket = heapless::Vec<Bit, 150>;
+type DataPacket = heapless::Vec<Bit, 1000>;
 
 #[main]
 fn main() -> ! {
@@ -85,7 +85,7 @@ fn main() -> ! {
     loop {
         if start_button.is_low() {
             break;
-        } // send start sequence
+        }
     }
 
     loop {
@@ -131,10 +131,11 @@ fn main() -> ! {
 
         // print_data_packet(&data_packet);
 
-        // print the light vals we sent
         // delay.delay(Duration::from_secs(2));
         delay.delay(Duration::from_millis(120));
     }
+    // }
+    // }
 }
 
 #[allow(unused)]
@@ -150,7 +151,9 @@ fn print_data_packet(data_packet: &DataPacket) {
 fn form_data_packet() -> Result<DataPacket, MorseError> {
     let mut packet = DataPacket::new();
 
-    for char in MSG.to_lowercase().chars() {
+    let msg_len = MSG.len();
+
+    for (i, char) in MSG.to_lowercase().chars().enumerate() {
         let m_seq = char
             .to_morse_bit_sequence()
             .expect("should be a valid bit sequence");
@@ -161,17 +164,18 @@ fn form_data_packet() -> Result<DataPacket, MorseError> {
             }
         }
 
-        let x: BitSequece = MorseBit::CharBreak.into();
-        for bit in x {
+        let delimeter: BitSequece = if i + 1 == msg_len {
+            MorseBit::LineBreak
+        } else {
+            MorseBit::CharBreak
+        }
+        .into();
+
+        for bit in delimeter {
             packet.push(bit).map_err(|_| MorseError::FullBuffer)?;
         }
     }
 
-    // send line break
-    let x: BitSequece = MorseBit::LineBreak.into();
-    for bit in x {
-        packet.push(bit).map_err(|_| MorseError::FullBuffer)?;
-    }
     Ok(packet)
 }
 

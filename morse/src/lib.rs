@@ -30,6 +30,7 @@ pub enum MorseError {
 // pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
 // pub const TIME_STEP_MICROS: u64 = 1e3 as u64 / 2;
 // pub const TIME_STEP_MICROS: u64 = 1000;
+// pub const TIME_STEP_MICROS: u64 = 900;
 // pub const TIME_STEP_MICROS: u64 = 100;
 // pub const TIME_STEP_MICROS: u64 = 50;
 // pub const TIME_STEP_MICROS: u64 = 20;
@@ -38,9 +39,14 @@ pub const TIME_STEP_MICROS: u64 = 11;
 // pub const TIME_STEP_MICROS: u64 = 10;
 
 // pub const MSG: &str = "Surendra";
-pub const MSG: &str = "suri.codes";
+// pub const MSG: &str = "suri.codes";
+
+// pub const MSG: &str = "e";
+// pub const MSG: &str = "eeeeeeeeeeeeeeeeeeeeeeeeeee";
+// pub const MSG: &str = "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+
+// pub const MSG: &str = "EEEEEEEEEEEEETTTTTTTTTTAAAAAAAAAOOOOOOOOOIIIIIIIINNNNNNNSSSSSSHHHHHHRRRRRRDDDDDDLLLLLCCCCUUUUMMMMWWWFFFGGGYYYPPPBBVVKKJJXQZ";
 // pub const MSG: &str = "Hello ESP32";
-// pub const MSG: &str = "eeeeeeeeeeeeeeeeeeeeeeeeee";
 
 pub const START_SEQUENCE: [Bit; 10] = [
     Bit::Hi,
@@ -100,13 +106,15 @@ impl From<MorseBit> for BitSequece {
         let mut vec = BitSequece::new();
         use Bit::*;
         match value {
-            MorseBit::Dot => vec.extend_from_slice(&[Lo]),
-            // MorseBit::Dash => vec.extend_from_slice(&[Hi, Lo]),
-            MorseBit::Dash => vec.extend_from_slice(&[Hi, Hi, Lo]),
-            // MorseBit::CharBreak => vec.extend_from_slice(&[Hi, Hi, Lo]),
-            MorseBit::CharBreak => vec.extend_from_slice(&[Hi, Lo]),
-            MorseBit::WordBreak => vec.extend_from_slice(&[Hi, Hi, Hi, Lo]),
-            MorseBit::LineBreak => vec.extend_from_slice(&[Hi, Hi, Hi, Hi, Lo]),
+            MorseBit::Dot => vec.extend_from_slice(&[Lo]), // 2, 3
+            // MorseBit::Dot => vec.extend_from_slice(&[Hi, Lo]),
+            // MorseBit::Dash => vec.extend_from_slice(&[Hi, Lo]), // 2
+            MorseBit::Dash => vec.extend_from_slice(&[Hi, Hi, Lo]), // 3
+            // MorseBit::Dash => vec.extend_from_slice(&[Hi, Hi, Lo]),
+            // MorseBit::CharBreak => vec.extend_from_slice(&[Hi, Hi, Lo]), // 2
+            MorseBit::CharBreak => vec.extend_from_slice(&[Hi, Lo]), // 3
+            MorseBit::LineBreak => vec.extend_from_slice(&[Hi, Hi, Hi, Lo]),
+            MorseBit::WordBreak => vec.extend_from_slice(&[Hi, Hi, Hi, Hi, Lo]),
         }
         .expect("should be impossible to error");
 
@@ -126,15 +134,19 @@ impl TryFrom<BitSequece> for MorseBit {
 
         if value.starts_with(&[Hi, Lo]) && value.len() == 2 {
             return Ok(CharBreak);
+            // return Ok(Dash);
         }
         if value.starts_with(&[Hi, Hi, Lo]) && value.len() == 3 {
             return Ok(Dash);
+            // return Ok(CharBreak);
         }
         if value.starts_with(&[Hi, Hi, Hi, Lo]) && value.len() == 4 {
-            return Ok(WordBreak);
+            // return Ok(WordBreak);
+            return Ok(LineBreak);
         }
         if value.starts_with(&[Hi, Hi, Hi, Hi, Lo]) && value.len() == 5 {
-            return Ok(LineBreak);
+            return Ok(WordBreak);
+            // return Ok(LineBreak);
         }
 
         Err(MorseError::UnknownBitSequence)

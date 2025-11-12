@@ -12,13 +12,10 @@ pub struct ListeningForMessage;
 
 pub struct Processing;
 
-pub type RawValBuf = heapless::Vec<u16, 200>;
-
 pub struct Parser<State = WaitingForStart> {
     state: core::marker::PhantomData<State>,
     start_queue: Option<VecDeque<Bit>>,
     pub bit_seq: BitSequece,
-    pub raw_val_buf: RawValBuf,
     pub morse_seq: MorseBitSequence,
 }
 
@@ -34,7 +31,6 @@ impl Parser<WaitingForStart> {
             state: PhantomData,
             start_queue: Some(VecDeque::with_capacity(12)),
             bit_seq: BitSequece::new(),
-            raw_val_buf: RawValBuf::new(),
             morse_seq: MorseBitSequence::new(),
         }
     }
@@ -55,7 +51,6 @@ impl Parser<WaitingForStart> {
                 return Some(Parser {
                     state: PhantomData,
                     start_queue: None,
-                    raw_val_buf: RawValBuf::new(),
                     bit_seq: BitSequece::new(),
                     morse_seq: MorseBitSequence::new(),
                 });
@@ -73,9 +68,6 @@ impl Parser<ListeningForMessage> {
         &mut self,
         raw_val: u16,
     ) -> Option<Result<Parser<Processing>, MorseError>> {
-        if self.raw_val_buf.push(raw_val).is_err() {
-            return Some(Err(MorseError::FullBuffer));
-        }
         let bit = if raw_val < HIGH_THRESHOLD {
             Bit::Lo
         } else {
@@ -98,7 +90,6 @@ impl Parser<ListeningForMessage> {
                     if m_bit == MorseBit::LineBreak {
                         return Some(Ok(Parser {
                             state: PhantomData,
-                            raw_val_buf: self.raw_val_buf.clone(),
                             start_queue: None,
                             bit_seq: self.bit_seq.clone(),
                             morse_seq: self.morse_seq.clone(),
@@ -119,15 +110,20 @@ impl Parser<Processing> {
     pub fn message(&mut self) -> Result<String, MorseError> {
         let mut msg = String::new();
 
-        for bit_slice in self.morse_seq.split(|e| *e == MorseBit::CharBreak) {
-            let c = char::from_morse_slice(bit_slice)?;
-            msg.push(c);
+        for bit_slice in self
+            .morse_seq
+            .split(|e| *e == MorseBit::CharBreak || *e == MorseBit::LineBreak)
+        {
+            if !bit_slice.is_empty() {
+                let c = char::from_morse_slice(bit_slice)?;
+                msg.push(c);
+            }
         }
 
         let msg = msg
             .to_lowercase()
-            .strip_suffix('\n')
-            .ok_or(MorseError::UnknownMorseSequence)?
+            // .strip_suffix('\n')
+            // .ok_or(MorseError::UnknownMorseSequence)?
             .to_owned();
 
         Ok(msg)
