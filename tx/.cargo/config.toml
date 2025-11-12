@@ -1,6 +1,6 @@
 [target.riscv32imac-unknown-none-elf]
 # remove the -p flag if it fails
-runner = "espflash flash --monitor --chip esp32c6 --log-format defmt -p /dev/cu.usbmodem111301"
+runner = "espflash flash --monitor --chip esp32c6 --log-format defmt -p /dev/cu.usbmodem101"
 # runner = "espflash flash --monitor --chip esp32c6 --log-format defmt "
 [env]
 DEFMT_LOG="info"

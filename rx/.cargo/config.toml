@@ -4,7 +4,7 @@ target = "riscv32imc-esp-espidf"
 [target.riscv32imc-esp-espidf]
 linker = "ldproxy"
 # runner = "espflash flash --monitor"
-runner = "espflash flash --monitor -p /dev/cu.usbmodem111401"
+runner = "espflash flash --monitor -p /dev/cu.usbmodem1101"
 rustflags = [ "--cfg",  "espidf_time64"]
 
 [unstable]

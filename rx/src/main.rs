@@ -5,7 +5,7 @@ use log::error;
 use crate::parser::{ListeningForMessage, Parser, Processing};
 
 // const SAMPLE_HERTZ: u64 = 83255;
-const SAMPLE_HERTZ: u64 = 83313;
+const SAMPLE_HERTZ: u64 = 83322;
 // const SAMPLE_HERTZ: u64 = 83262;
 // const SAMPLE_HERTZ: u64 = 1110;
 
@@ -71,7 +71,7 @@ fn main() -> anyhow::Result<()> {
                     }
                     Err(e) => {
                         error!("failed to parse message! {e:?}");
-                        info!("morse_seq: {:#?}", parser.morse_seq);
+                        // info!("morse_seq: {:#?}", parser.morse_seq);
                         // info!("bit_seq: {:#?}", parser.bit_seq);
                         // info!("light vals: {:#?}", parser.raw_val_buf);
                     }

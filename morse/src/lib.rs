@@ -17,7 +17,7 @@ pub enum MorseBit {
 
 pub type BitSequece = heapless::Vec<Bit, 8>;
 
-pub type MorseBitSequence = heapless::Vec<MorseBit, 150>;
+pub type MorseBitSequence = heapless::Vec<MorseBit, 350>;
 
 #[derive(Debug)]
 pub enum MorseError {
@@ -47,6 +47,7 @@ pub const TIME_STEP_MICROS: u64 = 11;
 
 // pub const MSG: &str = "EEEEEEEEEEEEETTTTTTTTTTAAAAAAAAAOOOOOOOOOIIIIIIIINNNNNNNSSSSSSHHHHHHRRRRRRDDDDDDLLLLLCCCCUUUUMMMMWWWFFFGGGYYYPPPBBVVKKJJXQZ";
 // pub const MSG: &str = "Hello ESP32";
+pub const MSG: &str = "UCSC CSE 121 ABCDEFGHIJKLM NOPQRSTUVWXYZ 12345 67890";
 
 pub const START_SEQUENCE: [Bit; 10] = [
     Bit::Hi,
