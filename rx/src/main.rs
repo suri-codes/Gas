@@ -1,5 +1,5 @@
 use ::log::info;
-use esp_idf_svc::hal::units::Hertz;
+use esp_idf_svc::{hal::units::Hertz, timer::EspTimerService};
 use log::error;
 
 use crate::parser::{ListeningForMessage, Parser, Processing};
@@ -32,16 +32,18 @@ fn main() -> anyhow::Result<()> {
 
     info!("SAMPLE_STEP: {}", SAMPLE_STEP);
 
-    //Default to just read 100 measurements per each read
     let mut samples = [AdcMeasurement::default(); SAMPLE_STEP as usize];
 
+    let time_service = EspTimerService::new().unwrap();
+
+    let mut start = time_service.now();
     let mut start_listener = Parser::new();
     let mut message_listener: Option<Parser<ListeningForMessage>> = None;
     let mut message_parser: Option<Parser<Processing>> = None;
-
     let mut perfect_reads = 0;
     let mut successful_reads = 0;
     let mut attempts = 0;
+    let mut fastest_perfect = 0.0;
 
     loop {
         let Ok(num_read) = adc.read(&mut samples, 10) else {
@@ -53,20 +55,30 @@ fn main() -> anyhow::Result<()> {
             if let Some(ref mut parser) = message_parser {
                 match parser.message() {
                     Ok(msg) => {
+                        let end = time_service.now();
                         successful_reads += 1;
                         let perf_msg = morse::MSG.to_lowercase();
+                        // Convert nanoseconds to seconds (1 second = 1,000,000,000 nanoseconds)
+                        let read_rate: f32 = (successful_reads as f32 / attempts as f32) * 100.0;
+                        let chars = msg.len();
+                        let duration = (end - start).as_nanos();
+                        let chars_per_second = (chars as f64) / (duration as f64 / 1_000_000_000.0);
                         if msg == perf_msg {
                             perfect_reads += 1;
+                            if chars_per_second > fastest_perfect {
+                                fastest_perfect = chars_per_second;
+                            }
                         }
-
-                        // lets crunch some numbers here
-                        let read_rate: f32 = (successful_reads as f32 / attempts as f32) * 100.0;
                         let perfect_rate: f32 = (perfect_reads as f32 / attempts as f32) * 100.0;
+                        // lets crunch some numbers here
 
                         info!("Message          : {msg}");
                         info!("Read accuracy    : {read_rate}%");
                         info!("Perfect accuracy : {perfect_rate}%");
                         info!("Attempts         : {attempts}");
+                        info!("Time Taken       : {duration:?}");
+                        info!("current c/s      : {:.2}", chars_per_second);
+                        info!("fastest c/s      : {:.2}", fastest_perfect);
                         println!("\n\n")
                     }
                     Err(e) => {
@@ -99,7 +111,9 @@ fn main() -> anyhow::Result<()> {
                 }
             } else if let Some(listener) = start_listener.process_light_val(measurement.data()) {
                 message_listener = Some(listener);
+
                 start_listener = Parser::default();
+                start = time_service.now();
                 attempts += 1;
             }
         }

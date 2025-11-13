@@ -13,7 +13,7 @@ use esp_hal::gpio::{Input, InputConfig, Output, OutputConfig};
 use esp_hal::main;
 use esp_hal::time::{Duration, Instant};
 use morse::{
-    Bit, BitSequece, MSG, MorseBit, MorseConversion, MorseError, START_SEQUENCE, TIME_STEP_MICROS,
+    Bit, BitSequece, MorseBit, MorseConversion, MorseError, MSG, START_SEQUENCE, TIME_STEP_MICROS,
 };
 use {esp_backtrace as _, esp_println as _};
 
@@ -123,8 +123,8 @@ fn main() -> ! {
         info!("Message           :  {}", MSG);
         info!("transmission time :  {:#?} micros", elapsed_char_micros);
         info!("optimal recv freq :  {} Hz", running_avg_recv_freq);
-        info!("chars per second  :  {:#?}", char_per_sec);
-        info!("bits per second   :  {:#?}", bits_per_sec);
+        // info!("chars per second  :  {:#?}", char_per_sec);
+        // info!("bits per second   :  {:#?}", bits_per_sec);
         info!("total msg bits    :  {:#?}", char_bits);
         info!("total bits        :  {:#?}", bits);
         info!("\n\n");
